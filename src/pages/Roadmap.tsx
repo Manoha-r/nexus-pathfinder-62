@@ -4,17 +4,17 @@ import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import {
   ArrowLeft,
-  CheckCircle2,
-  Circle,
-  ExternalLink,
-  BookOpen,
   Code,
   Award,
   Target,
+  Rocket,
 } from "lucide-react";
+import RoadmapTree from "@/components/RoadmapTree";
+import ScrollReveal from "@/components/ScrollReveal";
+import AnimatedCard from "@/components/AnimatedCard";
+import PageTransition from "@/components/PageTransition";
 
 const Roadmap = () => {
   const { roleId } = useParams();
@@ -162,7 +162,8 @@ const Roadmap = () => {
       : 0;
 
   return (
-    <div className="min-h-screen bg-background py-20 px-4 pt-24">
+    <PageTransition>
+      <div className="min-h-screen bg-background py-20 px-4 pt-24">
       <div className="max-w-5xl mx-auto">
         {/* Back Button */}
         <Link to="/branches">
@@ -197,134 +198,133 @@ const Roadmap = () => {
         </motion.div>
 
         {/* Progress Bar */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="mb-12"
-        >
-          <Card className="p-6 bg-card/50 backdrop-blur-sm">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold">Your Progress</h3>
-              <span className="text-2xl font-bold text-primary">
-                {Math.round(progress)}%
-              </span>
+        <ScrollReveal delay={0.2}>
+          <AnimatedCard glowColor="rgba(59, 130, 246, 0.8)">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold">Your Progress</h3>
+                <motion.span
+                  key={progress}
+                  initial={{ scale: 1.5, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent"
+                >
+                  {Math.round(progress)}%
+                </motion.span>
+              </div>
+              <div className="relative w-full bg-secondary rounded-full h-4 overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${progress}%` }}
+                  transition={{ duration: 1, ease: "easeOut" }}
+                  className="h-4 bg-gradient-to-r from-primary via-accent to-primary rounded-full relative overflow-hidden"
+                >
+                  <motion.div
+                    animate={{
+                      x: ["0%", "100%"],
+                    }}
+                    transition={{
+                      repeat: Infinity,
+                      duration: 2,
+                      ease: "linear",
+                    }}
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                  />
+                </motion.div>
+              </div>
             </div>
-            <div className="w-full bg-secondary rounded-full h-3">
-              <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: `${progress}%` }}
-                transition={{ duration: 0.5 }}
-                className="bg-gradient-to-r from-primary to-accent h-3 rounded-full"
-              />
-            </div>
-          </Card>
-        </motion.div>
+          </AnimatedCard>
+        </ScrollReveal>
 
-        {/* Roadmap Steps */}
-        <div className="space-y-8 mb-12">
-          {roadmap.steps.map((step, stepIndex) => (
-            <motion.div
-              key={stepIndex}
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: stepIndex * 0.1 }}
-            >
-              <Card className="p-6 hover:shadow-xl transition-all duration-300 bg-card/80 backdrop-blur-sm">
-                <div className="flex items-start gap-4">
-                  <button
-                    onClick={() => toggleStep(stepIndex)}
-                    className="mt-1 flex-shrink-0 transition-transform hover:scale-110"
-                  >
-                    {completedSteps.includes(stepIndex) ? (
-                      <CheckCircle2 className="h-8 w-8 text-green-500" />
-                    ) : (
-                      <Circle className="h-8 w-8 text-muted-foreground" />
-                    )}
-                  </button>
-                  <div className="flex-1">
-                    <h3 className="text-2xl font-bold mb-2">{step.title}</h3>
-                    <Badge variant="outline" className="mb-4">
-                      {step.duration}
-                    </Badge>
-                    <div className="space-y-4">
-                      {step.items.map((item, itemIndex) => (
-                        <div
-                          key={itemIndex}
-                          className="border-l-2 border-primary/30 pl-4"
-                        >
-                          <h4 className="font-semibold mb-2">{item.name}</h4>
-                          <div className="space-y-2">
-                            {item.resources.map((resource, resIndex) => (
-                              <a
-                                key={resIndex}
-                                href={resource.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center gap-2 text-sm text-primary hover:underline"
-                              >
-                                <BookOpen className="h-4 w-4" />
-                                {resource.title}
-                                <ExternalLink className="h-3 w-3" />
-                              </a>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            </motion.div>
-          ))}
-        </div>
+        {/* Roadmap Tree */}
+        <ScrollReveal delay={0.4}>
+          <div className="mb-12">
+            <RoadmapTree
+              steps={roadmap.steps}
+              completedSteps={completedSteps}
+              onToggleStep={toggleStep}
+            />
+          </div>
+        </ScrollReveal>
 
         {/* Projects Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mb-12"
-        >
-          <Card className="p-8 bg-gradient-to-br from-primary/10 to-accent/10 backdrop-blur-sm">
-            <div className="flex items-center gap-3 mb-6">
-              <Code className="h-8 w-8 text-primary" />
-              <h2 className="text-3xl font-bold">Practice Projects</h2>
+        <ScrollReveal delay={0.5}>
+          <AnimatedCard glowColor="rgba(34, 197, 94, 0.8)">
+            <div className="p-8">
+              <div className="flex items-center gap-3 mb-6">
+                <motion.div
+                  whileHover={{ rotate: 360 }}
+                  transition={{ duration: 0.6 }}
+                >
+                  <Code className="h-8 w-8 text-green-500" />
+                </motion.div>
+                <h2 className="text-3xl font-bold">Practice Projects</h2>
+              </div>
+              <ul className="space-y-3">
+                {roadmap.projects.map((project, index) => (
+                  <motion.li
+                    key={index}
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.1 }}
+                    whileHover={{ x: 10 }}
+                    className="flex items-start gap-3 cursor-pointer"
+                  >
+                    <motion.div
+                      whileHover={{ scale: 1.2, rotate: 360 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <Rocket className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                    </motion.div>
+                    <span className="text-lg">{project}</span>
+                  </motion.li>
+                ))}
+              </ul>
             </div>
-            <ul className="space-y-3">
-              {roadmap.projects.map((project, index) => (
-                <li key={index} className="flex items-start gap-3">
-                  <CheckCircle2 className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                  <span className="text-lg">{project}</span>
-                </li>
-              ))}
-            </ul>
-          </Card>
-        </motion.div>
+          </AnimatedCard>
+        </ScrollReveal>
 
         {/* Certifications */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-        >
-          <Card className="p-8 bg-gradient-to-br from-accent/10 to-primary/10 backdrop-blur-sm">
-            <div className="flex items-center gap-3 mb-6">
-              <Award className="h-8 w-8 text-accent" />
-              <h2 className="text-3xl font-bold">Recommended Certifications</h2>
+        <ScrollReveal delay={0.6}>
+          <AnimatedCard glowColor="rgba(168, 85, 247, 0.8)">
+            <div className="p-8">
+              <div className="flex items-center gap-3 mb-6">
+                <motion.div
+                  animate={{ rotate: [0, 10, -10, 0] }}
+                  transition={{ repeat: Infinity, duration: 3 }}
+                >
+                  <Award className="h-8 w-8 text-accent" />
+                </motion.div>
+                <h2 className="text-3xl font-bold">Recommended Certifications</h2>
+              </div>
+              <ul className="space-y-3">
+                {roadmap.certifications.map((cert, index) => (
+                  <motion.li
+                    key={index}
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.1 }}
+                    whileHover={{ x: 10 }}
+                    className="flex items-start gap-3 cursor-pointer"
+                  >
+                    <motion.div
+                      whileHover={{ scale: 1.2, rotate: 20 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <Award className="h-5 w-5 text-accent mt-0.5 flex-shrink-0" />
+                    </motion.div>
+                    <span className="text-lg">{cert}</span>
+                  </motion.li>
+                ))}
+              </ul>
             </div>
-            <ul className="space-y-3">
-              {roadmap.certifications.map((cert, index) => (
-                <li key={index} className="flex items-start gap-3">
-                  <Award className="h-5 w-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-lg">{cert}</span>
-                </li>
-              ))}
-            </ul>
-          </Card>
-        </motion.div>
+          </AnimatedCard>
+        </ScrollReveal>
       </div>
-    </div>
+      </div>
+    </PageTransition>
   );
 };
 

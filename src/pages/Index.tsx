@@ -4,9 +4,12 @@ import { OrbitControls, Sphere } from "@react-three/drei";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ArrowRight, Search, Sparkles, Globe2, TrendingUp, Users, Award } from "lucide-react";
+import { ArrowRight, Search, Sparkles, Globe2, TrendingUp, Users, Award, Code, Server, Cpu, Cog, Building2, FlaskConical, Zap, Plane, BookOpen, Target, Rocket } from "lucide-react";
 import { Link } from "react-router-dom";
 import * as THREE from "three";
+import AnimatedCard from "@/components/AnimatedCard";
+import ScrollReveal from "@/components/ScrollReveal";
+import PageTransition from "@/components/PageTransition";
 
 const Globe = () => {
   return (
@@ -51,9 +54,10 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
   const stats = [
-    { label: "Students Guided", value: 10000, icon: Users },
-    { label: "Career Paths", value: 50, icon: TrendingUp },
-    { label: "Success Rate", value: 95, icon: Award, suffix: "%" },
+    { label: "Students Guided", value: 10000, icon: Users, color: "from-blue-500 to-cyan-500" },
+    { label: "Career Paths", value: 50, icon: TrendingUp, color: "from-purple-500 to-pink-500" },
+    { label: "Success Rate", value: 95, icon: Award, suffix: "%", color: "from-green-500 to-emerald-500" },
+    { label: "Engineering Branches", value: 8, icon: BookOpen, suffix: "+", color: "from-orange-500 to-red-500" },
   ];
 
   const features = [
@@ -74,8 +78,111 @@ const Index = () => {
     },
   ];
 
+  const branches = [
+    {
+      id: "cse",
+      name: "Computer Science",
+      icon: Code,
+      color: "rgba(59, 130, 246, 0.8)",
+      gradient: "from-blue-500 to-cyan-500",
+      roles: 45,
+      description: "Software, AI, ML, Data Science",
+    },
+    {
+      id: "it",
+      name: "Information Technology",
+      icon: Server,
+      color: "rgba(168, 85, 247, 0.8)",
+      gradient: "from-purple-500 to-pink-500",
+      roles: 38,
+      description: "Cloud, DevOps, Networking",
+    },
+    {
+      id: "ece",
+      name: "Electronics & Comm.",
+      icon: Cpu,
+      color: "rgba(34, 197, 94, 0.8)",
+      gradient: "from-green-500 to-emerald-500",
+      roles: 35,
+      description: "Embedded, VLSI, IoT",
+    },
+    {
+      id: "me",
+      name: "Mechanical",
+      icon: Cog,
+      color: "rgba(249, 115, 22, 0.8)",
+      gradient: "from-orange-500 to-red-500",
+      roles: 32,
+      description: "Design, Manufacturing, Robotics",
+    },
+    {
+      id: "ce",
+      name: "Civil",
+      icon: Building2,
+      color: "rgba(234, 179, 8, 0.8)",
+      gradient: "from-yellow-500 to-amber-500",
+      roles: 28,
+      description: "Construction, Structural Design",
+    },
+    {
+      id: "che",
+      name: "Chemical",
+      icon: FlaskConical,
+      color: "rgba(20, 184, 166, 0.8)",
+      gradient: "from-teal-500 to-cyan-500",
+      roles: 25,
+      description: "Process Engineering, R&D",
+    },
+    {
+      id: "ee",
+      name: "Electrical",
+      icon: Zap,
+      color: "rgba(139, 92, 246, 0.8)",
+      gradient: "from-indigo-500 to-purple-500",
+      roles: 30,
+      description: "Power Systems, Control",
+    },
+    {
+      id: "ae",
+      name: "Aerospace",
+      icon: Plane,
+      color: "rgba(244, 63, 94, 0.8)",
+      gradient: "from-rose-500 to-pink-500",
+      roles: 22,
+      description: "Aircraft Design, Propulsion",
+    },
+  ];
+
+  const howItWorks = [
+    {
+      step: "1",
+      title: "Choose Your Branch",
+      description: "Select your engineering discipline from 8+ branches",
+      icon: Target,
+    },
+    {
+      step: "2",
+      title: "Explore Careers",
+      description: "Browse 50+ career paths with detailed insights",
+      icon: Search,
+    },
+    {
+      step: "3",
+      title: "Follow Roadmap",
+      description: "Get step-by-step guidance with courses and projects",
+      icon: BookOpen,
+    },
+    {
+      step: "4",
+      title: "Land Your Dream Job",
+      description: "Build skills, gain experience, and succeed",
+      icon: Rocket,
+    },
+  ];
+
   return (
-    <div className="min-h-screen bg-background pt-16">
+    <PageTransition>
+      <div className="min-h-screen bg-background pt-16">
       {/* Hero Section with 3D Globe */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background to-accent/20" />
@@ -164,66 +271,170 @@ const Index = () => {
 
       {/* Stats Section */}
       <section className="py-20 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {stats.map((stat, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1, duration: 0.5 }}
-              >
-                <Card className="p-8 text-center hover:scale-105 transition-transform duration-300 bg-card/50 backdrop-blur-sm">
-                  <stat.icon className="h-12 w-12 mx-auto mb-4 text-primary" />
-                  <div className="text-4xl font-bold mb-2">
-                    <AnimatedCounter end={stat.value} />
-                    {stat.suffix || "+"}
+              <ScrollReveal key={index} delay={index * 0.1}>
+                <AnimatedCard glowColor={stat.color}>
+                  <div className="p-8 text-center">
+                    <motion.div
+                      whileHover={{ rotate: 360, scale: 1.2 }}
+                      transition={{ duration: 0.6 }}
+                      className={`inline-block bg-gradient-to-br ${stat.color} w-16 h-16 rounded-xl flex items-center justify-center mb-4`}
+                    >
+                      <stat.icon className="h-8 w-8 text-white" />
+                    </motion.div>
+                    <div className="text-4xl font-bold mb-2">
+                      <AnimatedCounter end={stat.value} />
+                      {stat.suffix || "+"}
+                    </div>
+                    <p className="text-muted-foreground">{stat.label}</p>
                   </div>
-                  <p className="text-muted-foreground">{stat.label}</p>
-                </Card>
-              </motion.div>
+                </AnimatedCard>
+              </ScrollReveal>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* How It Works */}
+      <section className="py-20 px-4 bg-muted/30">
+        <div className="max-w-6xl mx-auto">
+          <ScrollReveal>
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-bold mb-4">
+                How NextStep Works
+              </h2>
+              <p className="text-xl text-muted-foreground">
+                Your journey to a successful career in 4 simple steps
+              </p>
+            </div>
+          </ScrollReveal>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {howItWorks.map((item, index) => (
+              <ScrollReveal key={index} delay={index * 0.15} direction="up">
+                <div className="relative">
+                  <AnimatedCard>
+                    <div className="p-8 text-center">
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        whileInView={{ scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: index * 0.15 + 0.3, type: "spring" }}
+                        className="bg-primary text-primary-foreground w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mb-6 mx-auto"
+                      >
+                        {item.step}
+                      </motion.div>
+                      <item.icon className="h-12 w-12 mx-auto mb-4 text-primary" />
+                      <h3 className="text-xl font-bold mb-3">{item.title}</h3>
+                      <p className="text-muted-foreground">{item.description}</p>
+                    </div>
+                  </AnimatedCard>
+                  {index < howItWorks.length - 1 && (
+                    <motion.div
+                      initial={{ scaleX: 0 }}
+                      whileInView={{ scaleX: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: index * 0.15 + 0.5, duration: 0.5 }}
+                      className="hidden lg:block absolute top-1/2 -right-4 w-8 h-0.5 bg-gradient-to-r from-primary to-accent"
+                    />
+                  )}
+                </div>
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Branches Section */}
+      <section className="py-20 px-4">
+        <div className="max-w-7xl mx-auto">
+          <ScrollReveal>
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-bold mb-4">
+                Explore Engineering Branches
+              </h2>
+              <p className="text-xl text-muted-foreground">
+                Find your perfect career path across diverse engineering disciplines
+              </p>
+            </div>
+          </ScrollReveal>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {branches.map((branch, index) => (
+              <ScrollReveal key={branch.id} delay={index * 0.1} direction="up">
+                <Link to={`/branch/${branch.id}`}>
+                  <AnimatedCard glowColor={branch.color}>
+                    <div className="p-6 h-full">
+                      <motion.div
+                        whileHover={{ rotate: 360 }}
+                        transition={{ duration: 0.6 }}
+                        className={`bg-gradient-to-br ${branch.gradient} w-16 h-16 rounded-xl flex items-center justify-center mb-4`}
+                      >
+                        <branch.icon className="h-8 w-8 text-white" />
+                      </motion.div>
+                      <h3 className="text-xl font-bold mb-2">{branch.name}</h3>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        {branch.description}
+                      </p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-semibold text-primary">
+                          {branch.roles}+ Roles
+                        </span>
+                        <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:translate-x-2 transition-transform" />
+                      </div>
+                    </div>
+                  </AnimatedCard>
+                </Link>
+              </ScrollReveal>
+            ))}
+          </div>
+
+          <ScrollReveal delay={0.5}>
+            <div className="text-center mt-12">
+              <Link to="/branches">
+                <Button size="lg" variant="outline" className="group">
+                  View All Branches
+                  <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
+            </div>
+          </ScrollReveal>
         </div>
       </section>
 
       {/* Features Section */}
       <section className="py-20 px-4 bg-muted/30">
         <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              Why Choose NextStep?
-            </h2>
-            <p className="text-xl text-muted-foreground">
-              Your personalized journey to engineering success
-            </p>
-          </motion.div>
+          <ScrollReveal>
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-bold mb-4">
+                Why Choose NextStep?
+              </h2>
+              <p className="text-xl text-muted-foreground">
+                Your personalized journey to engineering success
+              </p>
+            </div>
+          </ScrollReveal>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {features.map((feature, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.15, duration: 0.5 }}
-                whileHover={{ scale: 1.05, rotateY: 5 }}
-                className="group"
-              >
-                <Card className="p-8 h-full hover:shadow-2xl transition-all duration-300 bg-card/80 backdrop-blur-sm">
-                  <div className="bg-primary/10 w-16 h-16 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                    <feature.icon className="h-8 w-8 text-primary" />
+              <ScrollReveal key={index} delay={index * 0.15} direction="up">
+                <AnimatedCard>
+                  <div className="p-8 h-full">
+                    <motion.div
+                      whileHover={{ rotate: [0, -10, 10, -10, 0], scale: 1.2 }}
+                      transition={{ duration: 0.5 }}
+                      className="bg-primary/10 w-16 h-16 rounded-xl flex items-center justify-center mb-6"
+                    >
+                      <feature.icon className="h-8 w-8 text-primary" />
+                    </motion.div>
+                    <h3 className="text-2xl font-bold mb-3">{feature.title}</h3>
+                    <p className="text-muted-foreground">{feature.description}</p>
                   </div>
-                  <h3 className="text-2xl font-bold mb-3">{feature.title}</h3>
-                  <p className="text-muted-foreground">{feature.description}</p>
-                </Card>
-              </motion.div>
+                </AnimatedCard>
+              </ScrollReveal>
             ))}
           </div>
         </div>
@@ -231,29 +442,37 @@ const Index = () => {
 
       {/* CTA Section */}
       <section className="py-20 px-4">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          className="max-w-4xl mx-auto text-center"
-        >
-          <Card className="p-12 bg-gradient-to-br from-primary/20 to-accent/20 backdrop-blur-sm">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Ready to Start Your Journey?
-            </h2>
-            <p className="text-xl text-muted-foreground mb-8">
-              Join thousands of students who found their dream career path
-            </p>
-            <Link to="/branches">
-              <Button size="lg" className="text-lg px-8 py-6">
-                Get Started Now
-                <ArrowRight className="ml-2 h-6 w-6" />
-              </Button>
-            </Link>
-          </Card>
-        </motion.div>
+        <ScrollReveal>
+          <div className="max-w-4xl mx-auto text-center">
+            <AnimatedCard glowColor="rgba(168, 85, 247, 0.8)">
+              <div className="p-12">
+                <motion.div
+                  initial={{ scale: 0 }}
+                  whileInView={{ scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ type: "spring", delay: 0.2 }}
+                >
+                  <Rocket className="h-20 w-20 mx-auto mb-6 text-primary" />
+                </motion.div>
+                <h2 className="text-4xl md:text-5xl font-bold mb-6">
+                  Ready to Start Your Journey?
+                </h2>
+                <p className="text-xl text-muted-foreground mb-8">
+                  Join thousands of students who found their dream career path
+                </p>
+                <Link to="/branches">
+                  <Button size="lg" className="text-lg px-8 py-6 group">
+                    Get Started Now
+                    <ArrowRight className="ml-2 h-6 w-6 group-hover:translate-x-2 transition-transform" />
+                  </Button>
+                </Link>
+              </div>
+            </AnimatedCard>
+          </div>
+        </ScrollReveal>
       </section>
-    </div>
+      </div>
+    </PageTransition>
   );
 };
 

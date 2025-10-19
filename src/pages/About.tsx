@@ -1,6 +1,9 @@
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Target, Eye, Award, Users } from "lucide-react";
+import AnimatedCard from "@/components/AnimatedCard";
+import ScrollReveal from "@/components/ScrollReveal";
+import PageTransition from "@/components/PageTransition";
 
 const About = () => {
   const values = [
@@ -31,7 +34,8 @@ const About = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background py-20 px-4 pt-24">
+    <PageTransition>
+      <div className="min-h-screen bg-background py-20 px-4 pt-24">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <motion.div
@@ -77,45 +81,42 @@ const About = () => {
         {/* Values Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
           {values.map((value, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              whileHover={{ scale: 1.05 }}
-            >
-              <Card className="p-8 h-full hover:shadow-2xl transition-all duration-300 bg-card/80 backdrop-blur-sm">
-                <div className="bg-primary/10 w-16 h-16 rounded-xl flex items-center justify-center mb-6">
-                  <value.icon className="h-8 w-8 text-primary" />
+            <ScrollReveal key={index} delay={index * 0.1} direction={index % 2 === 0 ? "left" : "right"}>
+              <AnimatedCard>
+                <div className="p-8 h-full">
+                  <motion.div
+                    whileHover={{ rotate: 360, scale: 1.1 }}
+                    transition={{ duration: 0.6 }}
+                    className="bg-primary/10 w-16 h-16 rounded-xl flex items-center justify-center mb-6"
+                  >
+                    <value.icon className="h-8 w-8 text-primary" />
+                  </motion.div>
+                  <h3 className="text-2xl font-bold mb-4">{value.title}</h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    {value.description}
+                  </p>
                 </div>
-                <h3 className="text-2xl font-bold mb-4">{value.title}</h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  {value.description}
-                </p>
-              </Card>
-            </motion.div>
+              </AnimatedCard>
+            </ScrollReveal>
           ))}
         </div>
 
         {/* Team Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center"
-        >
-          <Card className="p-12 bg-gradient-to-br from-primary/20 to-accent/20 backdrop-blur-sm">
-            <h2 className="text-4xl font-bold mb-6">Built by Engineers, for Engineers</h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Our team combines decades of industry experience, technical
-              expertise, and a passion for education to create the best career
-              guidance platform for engineering students.
-            </p>
-          </Card>
-        </motion.div>
+        <ScrollReveal>
+          <AnimatedCard glowColor="rgba(168, 85, 247, 0.8)">
+            <div className="p-12 text-center">
+              <h2 className="text-4xl font-bold mb-6">Built by Engineers, for Engineers</h2>
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                Our team combines decades of industry experience, technical
+                expertise, and a passion for education to create the best career
+                guidance platform for engineering students.
+              </p>
+            </div>
+          </AnimatedCard>
+        </ScrollReveal>
       </div>
-    </div>
+      </div>
+    </PageTransition>
   );
 };
 
