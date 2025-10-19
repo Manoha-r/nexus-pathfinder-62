@@ -13,10 +13,15 @@ import {
   Star,
   Clock,
 } from "lucide-react";
+import AnimatedCard from "@/components/AnimatedCard";
+import ScrollReveal from "@/components/ScrollReveal";
+import PageTransition from "@/components/PageTransition";
+import PreloadAnimation from "@/components/PreloadAnimation";
 
 const BranchDetail = () => {
   const { branchId } = useParams();
   const [filter, setFilter] = useState("all");
+  const [isLoaded, setIsLoaded] = useState(false);
 
   // Sample roles data - in real app, this would come from API/database
   const roles = [
@@ -83,7 +88,11 @@ const BranchDetail = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background py-20 px-4 pt-24">
+    <>
+      <PreloadAnimation type="branchDetail" onComplete={() => setIsLoaded(true)} />
+      {isLoaded && (
+        <PageTransition>
+          <div className="min-h-screen bg-background py-20 px-4 pt-24">
       <div className="max-w-7xl mx-auto">
         {/* Back Button */}
         <Link to="/branches">
@@ -129,25 +138,20 @@ const BranchDetail = () => {
         {/* Roles Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {filteredRoles.map((role, index) => (
-            <motion.div
-              key={role.id}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              whileHover={{ scale: 1.02 }}
-            >
-              <Card className="p-6 h-full hover:shadow-2xl transition-all duration-300 bg-card/80 backdrop-blur-sm group">
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <h3 className="text-2xl font-bold mb-2 group-hover:text-primary transition-colors">
-                      {role.title}
-                    </h3>
-                    <Badge className={`${getLevelColor(role.level)} border`}>
-                      {role.level}
-                    </Badge>
+            <ScrollReveal key={role.id} delay={index * 0.1} direction="up">
+              <AnimatedCard glowColor="rgba(59, 130, 246, 0.8)">
+                <div className="p-6 h-full">
+                  <div className="flex items-start justify-between mb-4">
+                    <div>
+                      <h3 className="text-2xl font-bold mb-2">{role.title}</h3>
+                      <Badge className={`${getLevelColor(role.level)} border`}>
+                        {role.level}
+                      </Badge>
+                    </div>
+                    <motion.div whileHover={{ scale: 1.2, rotate: 360 }} transition={{ duration: 0.5 }}>
+                      <Briefcase className="h-8 w-8 text-primary" />
+                    </motion.div>
                   </div>
-                  <Briefcase className="h-8 w-8 text-primary" />
-                </div>
 
                 <p className="text-muted-foreground mb-6">{role.description}</p>
 
@@ -190,31 +194,37 @@ const BranchDetail = () => {
                     <ChevronRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                   </Button>
                 </Link>
-              </Card>
-            </motion.div>
+                </div>
+              </AnimatedCard>
+            </ScrollReveal>
           ))}
         </div>
 
         {/* Call to Action */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mt-16"
-        >
-          <Card className="p-12 text-center bg-gradient-to-br from-primary/20 to-accent/20 backdrop-blur-sm">
-            <BookOpen className="h-16 w-16 mx-auto mb-6 text-primary" />
-            <h2 className="text-3xl font-bold mb-4">
-              Ready to Start Your Journey?
-            </h2>
-            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Choose a role above to access detailed roadmaps, courses,
-              projects, and interview preparation resources.
-            </p>
-          </Card>
-        </motion.div>
+        <ScrollReveal delay={0.5}>
+          <AnimatedCard glowColor="rgba(168, 85, 247, 0.8)">
+            <div className="p-12 text-center">
+              <motion.div
+                animate={{ rotate: [0, 360] }}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              >
+                <BookOpen className="h-16 w-16 mx-auto mb-6 text-primary" />
+              </motion.div>
+              <h2 className="text-3xl font-bold mb-4">
+                Ready to Start Your Journey?
+              </h2>
+              <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+                Choose a role above to access detailed roadmaps, courses,
+                projects, and interview preparation resources.
+              </p>
+            </div>
+          </AnimatedCard>
+        </ScrollReveal>
       </div>
-    </div>
+      </div>
+        </PageTransition>
+      )}
+    </>
   );
 };
 

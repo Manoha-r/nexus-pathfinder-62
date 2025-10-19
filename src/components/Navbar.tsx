@@ -2,25 +2,12 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Moon, Sun, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
+import ThemeToggle from "./ThemeToggle";
 
 const Navbar = () => {
-  const [isDark, setIsDark] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
-
-  useEffect(() => {
-    const theme = localStorage.getItem("theme") || "dark";
-    setIsDark(theme === "dark");
-    document.documentElement.classList.toggle("dark", theme === "dark");
-  }, []);
-
-  const toggleTheme = () => {
-    const newTheme = isDark ? "light" : "dark";
-    setIsDark(!isDark);
-    localStorage.setItem("theme", newTheme);
-    document.documentElement.classList.toggle("dark", !isDark);
-  };
 
   const navLinks = [
     { path: "/", label: "Home" },
@@ -75,20 +62,7 @@ const Navbar = () => {
 
           {/* Actions */}
           <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={toggleTheme}
-              className="rounded-full"
-            >
-              <motion.div
-                initial={{ rotate: 0 }}
-                animate={{ rotate: isDark ? 180 : 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                {isDark ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
-              </motion.div>
-            </Button>
+            <ThemeToggle />
 
             {/* Mobile Menu Button */}
             <Button

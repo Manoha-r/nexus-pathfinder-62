@@ -15,10 +15,12 @@ import RoadmapTree from "@/components/RoadmapTree";
 import ScrollReveal from "@/components/ScrollReveal";
 import AnimatedCard from "@/components/AnimatedCard";
 import PageTransition from "@/components/PageTransition";
+import PreloadAnimation from "@/components/PreloadAnimation";
 
 const Roadmap = () => {
   const { roleId } = useParams();
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const toggleStep = (stepIndex: number) => {
     setCompletedSteps((prev) =>
@@ -162,8 +164,11 @@ const Roadmap = () => {
       : 0;
 
   return (
-    <PageTransition>
-      <div className="min-h-screen bg-background py-20 px-4 pt-24">
+    <>
+      <PreloadAnimation type="roadmap" onComplete={() => setIsLoaded(true)} />
+      {isLoaded && (
+        <PageTransition>
+          <div className="min-h-screen bg-background py-20 px-4 pt-24">
       <div className="max-w-5xl mx-auto">
         {/* Back Button */}
         <Link to="/branches">
@@ -324,7 +329,9 @@ const Roadmap = () => {
         </ScrollReveal>
       </div>
       </div>
-    </PageTransition>
+        </PageTransition>
+      )}
+    </>
   );
 };
 

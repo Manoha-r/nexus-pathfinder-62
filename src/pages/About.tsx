@@ -4,8 +4,12 @@ import { Target, Eye, Award, Users } from "lucide-react";
 import AnimatedCard from "@/components/AnimatedCard";
 import ScrollReveal from "@/components/ScrollReveal";
 import PageTransition from "@/components/PageTransition";
+import PreloadAnimation from "@/components/PreloadAnimation";
+import { useState } from "react";
 
 const About = () => {
+  const [isLoaded, setIsLoaded] = useState(false);
+  
   const values = [
     {
       icon: Target,
@@ -34,8 +38,11 @@ const About = () => {
   ];
 
   return (
-    <PageTransition>
-      <div className="min-h-screen bg-background py-20 px-4 pt-24">
+    <>
+      <PreloadAnimation type="about" onComplete={() => setIsLoaded(true)} />
+      {isLoaded && (
+        <PageTransition>
+          <div className="min-h-screen bg-background py-20 px-4 pt-24">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <motion.div
@@ -116,7 +123,9 @@ const About = () => {
         </ScrollReveal>
       </div>
       </div>
-    </PageTransition>
+        </PageTransition>
+      )}
+    </>
   );
 };
 

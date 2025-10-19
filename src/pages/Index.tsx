@@ -10,6 +10,7 @@ import * as THREE from "three";
 import AnimatedCard from "@/components/AnimatedCard";
 import ScrollReveal from "@/components/ScrollReveal";
 import PageTransition from "@/components/PageTransition";
+import PreloadAnimation from "@/components/PreloadAnimation";
 
 const Globe = () => {
   return (
@@ -52,6 +53,7 @@ const AnimatedCounter = ({ end, duration = 2 }: { end: number; duration?: number
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const stats = [
     { label: "Students Guided", value: 10000, icon: Users, color: "from-blue-500 to-cyan-500" },
@@ -181,8 +183,11 @@ const Index = () => {
   ];
 
   return (
-    <PageTransition>
-      <div className="min-h-screen bg-background pt-16">
+    <>
+      <PreloadAnimation type="home" onComplete={() => setIsLoaded(true)} />
+      {isLoaded && (
+        <PageTransition>
+          <div className="min-h-screen bg-background pt-16">
       {/* Hero Section with 3D Globe */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background to-accent/20" />
@@ -472,7 +477,9 @@ const Index = () => {
         </ScrollReveal>
       </section>
       </div>
-    </PageTransition>
+        </PageTransition>
+      )}
+    </>
   );
 };
 

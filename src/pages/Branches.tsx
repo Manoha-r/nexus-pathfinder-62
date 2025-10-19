@@ -7,9 +7,11 @@ import { Search, Code, Server, Cpu, Cog, Building2, FlaskConical, Zap, Plane } f
 import AnimatedCard from "@/components/AnimatedCard";
 import ScrollReveal from "@/components/ScrollReveal";
 import PageTransition from "@/components/PageTransition";
+import PreloadAnimation from "@/components/PreloadAnimation";
 
 const Branches = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const branches = [
     {
@@ -91,8 +93,11 @@ const Branches = () => {
   );
 
   return (
-    <PageTransition>
-      <div className="min-h-screen bg-background py-20 px-4 pt-24">
+    <>
+      <PreloadAnimation type="branches" onComplete={() => setIsLoaded(true)} />
+      {isLoaded && (
+        <PageTransition>
+          <div className="min-h-screen bg-background py-20 px-4 pt-24">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <motion.div
@@ -160,9 +165,11 @@ const Branches = () => {
               </ScrollReveal>
             ))}
           </div>
+          </div>
         </div>
-      </div>
-    </PageTransition>
+        </PageTransition>
+      )}
+    </>
   );
 };
 
