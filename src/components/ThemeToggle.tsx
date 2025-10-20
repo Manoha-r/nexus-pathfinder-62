@@ -19,36 +19,51 @@ const ThemeToggle = () => {
     setIsTransitioning(true);
     const newTheme = isDark ? "light" : "dark";
     
-    // Create overlay for lighting effect
+    // Create cascading overlay effect element by element
+    const allElements = Array.from(document.querySelectorAll('body *'));
     const overlay = document.createElement("div");
     overlay.style.cssText = `
       position: fixed;
-      inset: 0;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      width: 200vmax;
+      height: 200vmax;
+      border-radius: 50%;
+      background: ${isDark ? "radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.8) 50%, transparent 100%)" : "radial-gradient(circle, rgba(10,15,36,0.95) 0%, rgba(10,15,36,0.8) 50%, transparent 100%)"};
       z-index: 9999;
       pointer-events: none;
-      background: ${isDark ? "white" : "black"};
-      opacity: 0;
-      transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: transform 2.5s cubic-bezier(0.4, 0, 0.2, 1);
     `;
     document.body.appendChild(overlay);
 
-    // Trigger the lighting effect
-    requestAnimationFrame(() => {
-      overlay.style.opacity = isDark ? "0.95" : "0.95";
-      
+    // Cascade through elements
+    allElements.forEach((el, index) => {
       setTimeout(() => {
-        setIsDark(!isDark);
-        localStorage.setItem("theme", newTheme);
-        document.documentElement.classList.toggle("dark", !isDark);
-        
-        overlay.style.opacity = "0";
-        
-        setTimeout(() => {
-          document.body.removeChild(overlay);
-          setIsTransitioning(false);
-        }, 1200);
-      }, 600);
+        el.classList.add('theme-transitioning');
+      }, (index / allElements.length) * 1500);
     });
+
+    // Expand overlay
+    requestAnimationFrame(() => {
+      overlay.style.transform = "translate(-50%, -50%) scale(1)";
+    });
+
+    // Apply theme change
+    setTimeout(() => {
+      setIsDark(!isDark);
+      localStorage.setItem("theme", newTheme);
+      document.documentElement.classList.toggle("dark", !isDark);
+    }, 800);
+
+    // Cleanup
+    setTimeout(() => {
+      overlay.remove();
+      allElements.forEach(el => {
+        el.classList.remove('theme-transitioning');
+      });
+      setIsTransitioning(false);
+    }, 3000);
   };
 
   return (
@@ -68,7 +83,7 @@ const ThemeToggle = () => {
             exit={{ rotate: 90, scale: 0 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
           >
-            <Moon className="h-5 w-5" />
+            <Moon className="h-5 w-5 drop-shadow-[0_0_10px_rgba(147,197,253,0.9)]" />
           </motion.div>
         ) : (
           <motion.div
@@ -78,17 +93,36 @@ const ThemeToggle = () => {
             exit={{ rotate: -90, scale: 0 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
           >
-            <Sun className="h-5 w-5" />
+            <Sun className="h-5 w-5 drop-shadow-[0_0_10px_rgba(251,191,36,0.9)]" />
           </motion.div>
         )}
       </AnimatePresence>
       
-      {/* Ripple effect */}
+      {/* Pulsing glow */}
+      <motion.div
+        animate={{
+          scale: [1, 1.5, 1],
+          opacity: [0.4, 0, 0.4],
+        }}
+        transition={{
+          duration: 2,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+        className="absolute inset-0 rounded-full"
+        style={{
+          background: isDark 
+            ? "radial-gradient(circle, rgba(147,197,253,0.5) 0%, transparent 70%)"
+            : "radial-gradient(circle, rgba(251,191,36,0.5) 0%, transparent 70%)",
+        }}
+      />
+      
+      {/* Ripple on transition */}
       {isTransitioning && (
         <motion.div
           initial={{ scale: 0, opacity: 0.8 }}
-          animate={{ scale: 3, opacity: 0 }}
-          transition={{ duration: 1 }}
+          animate={{ scale: 4, opacity: 0 }}
+          transition={{ duration: 1.5 }}
           className={`absolute inset-0 rounded-full ${
             isDark ? "bg-white" : "bg-black"
           }`}

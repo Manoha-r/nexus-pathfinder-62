@@ -12,10 +12,63 @@ import ScrollReveal from "@/components/ScrollReveal";
 import PageTransition from "@/components/PageTransition";
 import PreloadAnimation from "@/components/PreloadAnimation";
 
+// Tech city coordinates (latitude, longitude)
+const techCities = [
+  { name: "San Francisco", lat: 37.7749, lng: -122.4194, color: "#00ffff" },
+  { name: "New York", lat: 40.7128, lng: -74.0060, color: "#00ff00" },
+  { name: "London", lat: 51.5074, lng: -0.1278, color: "#ff00ff" },
+  { name: "Berlin", lat: 52.5200, lng: 13.4050, color: "#ffff00" },
+  { name: "Tel Aviv", lat: 32.0853, lng: 34.7818, color: "#ff6600" },
+  { name: "Singapore", lat: 1.3521, lng: 103.8198, color: "#ff0066" },
+  { name: "Tokyo", lat: 35.6762, lng: 139.6503, color: "#6600ff" },
+  { name: "Seoul", lat: 37.5665, lng: 126.9780, color: "#00ffaa" },
+  { name: "Bangalore", lat: 12.9716, lng: 77.5946, color: "#ffaa00" },
+  { name: "Sydney", lat: -33.8688, lng: 151.2093, color: "#0099ff" },
+  { name: "Toronto", lat: 43.6532, lng: -79.3832, color: "#ff3366" },
+  { name: "São Paulo", lat: -23.5505, lng: -46.6333, color: "#66ff00" },
+  { name: "Dubai", lat: 25.2048, lng: 55.2708, color: "#ff9900" },
+  { name: "Shanghai", lat: 31.2304, lng: 121.4737, color: "#9900ff" },
+  { name: "Austin", lat: 30.2672, lng: -97.7431, color: "#00ff99" },
+];
+
+// Convert lat/lng to 3D coordinates
+const latLngToVector3 = (lat: number, lng: number, radius: number) => {
+  const phi = (90 - lat) * (Math.PI / 180);
+  const theta = (lng + 180) * (Math.PI / 180);
+  
+  const x = -(radius * Math.sin(phi) * Math.cos(theta));
+  const z = radius * Math.sin(phi) * Math.sin(theta);
+  const y = radius * Math.cos(phi);
+  
+  return new THREE.Vector3(x, y, z);
+};
+
+const CityMarker = ({ position, color, name }: { position: THREE.Vector3; color: string; name: string }) => {
+  return (
+    <group position={position}>
+      {/* Pulsing marker */}
+      <mesh>
+        <sphereGeometry args={[0.03, 16, 16]} />
+        <meshBasicMaterial color={color} />
+      </mesh>
+      {/* Glow ring */}
+      <mesh>
+        <ringGeometry args={[0.04, 0.06, 32]} />
+        <meshBasicMaterial color={color} transparent opacity={0.6} side={THREE.DoubleSide} />
+      </mesh>
+      {/* Vertical beam */}
+      <mesh position={[0, 0.15, 0]}>
+        <cylinderGeometry args={[0.005, 0.005, 0.3, 8]} />
+        <meshBasicMaterial color={color} transparent opacity={0.4} />
+      </mesh>
+    </group>
+  );
+};
+
 const Globe = () => {
   const textureLoader = new THREE.TextureLoader();
   
-  // Create earth texture from a public URL
+  // Create earth texture with better visibility
   const earthTexture = textureLoader.load(
     'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg'
   );
@@ -26,23 +79,38 @@ const Globe = () => {
 
   return (
     <group>
+      {/* Bright ambient light for visibility */}
+      <ambientLight intensity={0.8} />
+      <pointLight position={[10, 10, 10]} intensity={1.5} />
+      <pointLight position={[-10, -10, -10]} intensity={0.8} color="#4a90e2" />
+      
       {/* Main Earth Sphere */}
-      <Sphere args={[2, 64, 64]}>
+      <Sphere args={[2, 128, 128]}>
         <meshStandardMaterial
           map={earthTexture}
           bumpMap={bumpMap}
-          bumpScale={0.05}
-          emissive="#1a1a2e"
-          emissiveIntensity={0.2}
-          metalness={0.1}
-          roughness={0.8}
+          bumpScale={0.08}
+          emissive="#2a4a6e"
+          emissiveIntensity={0.4}
+          metalness={0.2}
+          roughness={0.6}
         />
       </Sphere>
       
-      {/* Atmosphere Glow */}
-      <Sphere args={[2.1, 64, 64]}>
+      {/* Inner Atmosphere Glow */}
+      <Sphere args={[2.08, 64, 64]}>
         <meshBasicMaterial
           color="#4a90e2"
+          transparent
+          opacity={0.25}
+          side={THREE.BackSide}
+        />
+      </Sphere>
+      
+      {/* Mid Atmosphere */}
+      <Sphere args={[2.15, 64, 64]}>
+        <meshBasicMaterial
+          color="#00ccff"
           transparent
           opacity={0.15}
           side={THREE.BackSide}
@@ -50,14 +118,20 @@ const Globe = () => {
       </Sphere>
       
       {/* Outer Glow */}
-      <Sphere args={[2.2, 64, 64]}>
+      <Sphere args={[2.25, 64, 64]}>
         <meshBasicMaterial
           color="#00ffff"
           transparent
-          opacity={0.08}
+          opacity={0.12}
           side={THREE.BackSide}
         />
       </Sphere>
+      
+      {/* Tech City Markers */}
+      {techCities.map((city, index) => {
+        const position = latLngToVector3(city.lat, city.lng, 2.05);
+        return <CityMarker key={index} position={position} color={city.color} name={city.name} />;
+      })}
     </group>
   );
 };
@@ -230,17 +304,38 @@ const Index = () => {
         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background to-accent/20" />
         
         {/* 3D Globe */}
-        <div className="absolute inset-0 opacity-30">
-          <Canvas camera={{ position: [0, 0, 5] }}>
-            <ambientLight intensity={0.5} />
-            <pointLight position={[10, 10, 10]} intensity={1} />
-            <Globe />
+        <div className="absolute inset-0 opacity-40">
+          <Canvas 
+            camera={{ position: [0, 0, 5], fov: 50 }}
+            gl={{ antialias: true, alpha: true }}
+            dpr={[1, 2]}
+          >
             <OrbitControls
-              enableZoom={false}
+              enableZoom={true}
               autoRotate
-              autoRotateSpeed={1}
+              autoRotateSpeed={0.8}
+              enablePan={false}
+              minDistance={3}
+              maxDistance={8}
             />
+            <Globe />
           </Canvas>
+          
+          {/* Radial glow overlay */}
+          <div className="absolute inset-0 pointer-events-none">
+            <motion.div
+              animate={{
+                opacity: [0.4, 0.7, 0.4],
+                scale: [1, 1.05, 1],
+              }}
+              transition={{
+                duration: 5,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              className="absolute inset-0 bg-gradient-radial from-blue-500/20 via-transparent to-transparent blur-3xl"
+            />
+          </div>
         </div>
 
         {/* Hero Content */}
