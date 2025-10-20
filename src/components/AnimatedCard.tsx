@@ -102,16 +102,33 @@ const AnimatedCard = ({ children, className = "", glowColor = "rgba(59, 130, 246
 
       {/* Glow effect on hover */}
       <motion.div
-        className="absolute inset-0 rounded-xl opacity-0 blur-xl pointer-events-none"
+        className="absolute inset-0 rounded-xl opacity-0 blur-2xl pointer-events-none"
         animate={{
-          opacity: isHovered ? 0.6 : 0,
+          opacity: isHovered ? 0.7 : 0,
         }}
         style={{
-          background: `radial-gradient(circle at center, ${glowColor}, transparent 70%)`,
+          background: `radial-gradient(circle at center, ${glowColor}, transparent 60%)`,
         }}
       />
 
-      <Card className={`relative ${className} hover:shadow-2xl transition-all duration-500`}>
+      {/* Pulse glow on hover */}
+      <motion.div
+        className="absolute inset-0 rounded-xl opacity-0 blur-md pointer-events-none"
+        animate={{
+          opacity: isHovered ? [0.3, 0.6, 0.3] : 0,
+          scale: isHovered ? [1, 1.02, 1] : 1,
+        }}
+        transition={{
+          duration: 2,
+          repeat: isHovered ? Infinity : 0,
+          ease: "easeInOut",
+        }}
+        style={{
+          background: `radial-gradient(circle at center, ${glowColor}, transparent 50%)`,
+        }}
+      />
+
+      <Card className={`relative ${className} hover:shadow-2xl hover:shadow-[${glowColor}]/20 transition-all duration-500`}>
         {children}
       </Card>
     </motion.div>

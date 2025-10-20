@@ -13,15 +13,52 @@ import PageTransition from "@/components/PageTransition";
 import PreloadAnimation from "@/components/PreloadAnimation";
 
 const Globe = () => {
+  const textureLoader = new THREE.TextureLoader();
+  
+  // Create earth texture from a public URL
+  const earthTexture = textureLoader.load(
+    'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg'
+  );
+  
+  const bumpMap = textureLoader.load(
+    'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_normal_2048.jpg'
+  );
+
   return (
-    <Sphere args={[2, 64, 64]}>
-      <meshStandardMaterial
-        color="#4a90e2"
-        wireframe
-        emissive="#00ffff"
-        emissiveIntensity={0.5}
-      />
-    </Sphere>
+    <group>
+      {/* Main Earth Sphere */}
+      <Sphere args={[2, 64, 64]}>
+        <meshStandardMaterial
+          map={earthTexture}
+          bumpMap={bumpMap}
+          bumpScale={0.05}
+          emissive="#1a1a2e"
+          emissiveIntensity={0.2}
+          metalness={0.1}
+          roughness={0.8}
+        />
+      </Sphere>
+      
+      {/* Atmosphere Glow */}
+      <Sphere args={[2.1, 64, 64]}>
+        <meshBasicMaterial
+          color="#4a90e2"
+          transparent
+          opacity={0.15}
+          side={THREE.BackSide}
+        />
+      </Sphere>
+      
+      {/* Outer Glow */}
+      <Sphere args={[2.2, 64, 64]}>
+        <meshBasicMaterial
+          color="#00ffff"
+          transparent
+          opacity={0.08}
+          side={THREE.BackSide}
+        />
+      </Sphere>
+    </group>
   );
 };
 
