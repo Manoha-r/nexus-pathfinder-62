@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, Sphere } from "@react-three/drei";
+import { OrbitControls, Sphere, Text } from "@react-three/drei";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -44,23 +44,42 @@ const latLngToVector3 = (lat: number, lng: number, radius: number) => {
 };
 
 const CityMarker = ({ position, color, name }: { position: THREE.Vector3; color: string; name: string }) => {
+  const labelPosition = position.clone().multiplyScalar(1.15);
+  
   return (
     <group position={position}>
       {/* Pulsing marker */}
       <mesh>
-        <sphereGeometry args={[0.03, 16, 16]} />
+        <sphereGeometry args={[0.04, 16, 16]} />
         <meshBasicMaterial color={color} />
       </mesh>
-      {/* Glow ring */}
+      {/* Inner glow */}
       <mesh>
-        <ringGeometry args={[0.04, 0.06, 32]} />
-        <meshBasicMaterial color={color} transparent opacity={0.6} side={THREE.DoubleSide} />
+        <sphereGeometry args={[0.06, 16, 16]} />
+        <meshBasicMaterial color={color} transparent opacity={0.5} />
+      </mesh>
+      {/* Outer glow ring */}
+      <mesh>
+        <ringGeometry args={[0.05, 0.08, 32]} />
+        <meshBasicMaterial color={color} transparent opacity={0.7} side={THREE.DoubleSide} />
       </mesh>
       {/* Vertical beam */}
-      <mesh position={[0, 0.15, 0]}>
-        <cylinderGeometry args={[0.005, 0.005, 0.3, 8]} />
-        <meshBasicMaterial color={color} transparent opacity={0.4} />
+      <mesh position={[0, 0.2, 0]}>
+        <cylinderGeometry args={[0.008, 0.008, 0.4, 8]} />
+        <meshBasicMaterial color={color} transparent opacity={0.6} />
       </mesh>
+      {/* City name label */}
+      <Text
+        position={labelPosition}
+        fontSize={0.08}
+        color={color}
+        anchorX="center"
+        anchorY="middle"
+        outlineWidth={0.005}
+        outlineColor="#000000"
+      >
+        {name}
+      </Text>
     </group>
   );
 };
@@ -68,9 +87,9 @@ const CityMarker = ({ position, color, name }: { position: THREE.Vector3; color:
 const Globe = () => {
   const textureLoader = new THREE.TextureLoader();
   
-  // Create earth texture with better visibility
+  // Load high-quality 4K earth textures
   const earthTexture = textureLoader.load(
-    'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg'
+    'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_4096.jpg'
   );
   
   const bumpMap = textureLoader.load(
@@ -79,55 +98,67 @@ const Globe = () => {
 
   return (
     <group>
-      {/* Bright ambient light for visibility */}
-      <ambientLight intensity={0.8} />
-      <pointLight position={[10, 10, 10]} intensity={1.5} />
-      <pointLight position={[-10, -10, -10]} intensity={0.8} color="#4a90e2" />
+      {/* Enhanced lighting for 4K clarity */}
+      <ambientLight intensity={1.2} />
+      <directionalLight position={[5, 3, 5]} intensity={2} color="#ffffff" />
+      <pointLight position={[10, 10, 10]} intensity={2} color="#ffffff" />
+      <pointLight position={[-10, -10, -10]} intensity={1.2} color="#6eb5ff" />
+      <pointLight position={[0, -10, 0]} intensity={0.8} color="#4a90e2" />
       
-      {/* Main Earth Sphere */}
-      <Sphere args={[2, 128, 128]}>
+      {/* Main Earth Sphere with 4K textures */}
+      <Sphere args={[2, 256, 256]}>
         <meshStandardMaterial
           map={earthTexture}
           bumpMap={bumpMap}
-          bumpScale={0.08}
-          emissive="#2a4a6e"
-          emissiveIntensity={0.4}
-          metalness={0.2}
-          roughness={0.6}
+          bumpScale={0.05}
+          emissive="#1a3a5e"
+          emissiveIntensity={0.6}
+          metalness={0.3}
+          roughness={0.5}
         />
       </Sphere>
       
-      {/* Inner Atmosphere Glow */}
-      <Sphere args={[2.08, 64, 64]}>
+      {/* Bright inner glow */}
+      <Sphere args={[2.06, 64, 64]}>
         <meshBasicMaterial
-          color="#4a90e2"
+          color="#5ab4ff"
+          transparent
+          opacity={0.35}
+          side={THREE.BackSide}
+        />
+      </Sphere>
+      
+      {/* Mid atmosphere layer */}
+      <Sphere args={[2.12, 64, 64]}>
+        <meshBasicMaterial
+          color="#00d4ff"
           transparent
           opacity={0.25}
           side={THREE.BackSide}
         />
       </Sphere>
       
-      {/* Mid Atmosphere */}
-      <Sphere args={[2.15, 64, 64]}>
-        <meshBasicMaterial
-          color="#00ccff"
-          transparent
-          opacity={0.15}
-          side={THREE.BackSide}
-        />
-      </Sphere>
-      
-      {/* Outer Glow */}
-      <Sphere args={[2.25, 64, 64]}>
+      {/* Outer atmosphere glow */}
+      <Sphere args={[2.2, 64, 64]}>
         <meshBasicMaterial
           color="#00ffff"
           transparent
-          opacity={0.12}
+          opacity={0.18}
+          side={THREE.BackSide}
+        />
+      </Sphere>
+
+      {/* Extreme outer glow */}
+      <Sphere args={[2.3, 64, 64]}>
+        <meshBasicMaterial
+          color="#66ffff"
+          transparent
+          opacity={0.1}
           side={THREE.BackSide}
         />
       </Sphere>
       
-      {/* Tech City Markers */}
+      {/* Tech City Markers with labels */}
       {techCities.map((city, index) => {
         const position = latLngToVector3(city.lat, city.lng, 2.05);
         return <CityMarker key={index} position={position} color={city.color} name={city.name} />;
@@ -304,11 +335,11 @@ const Index = () => {
         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background to-accent/20" />
         
         {/* 3D Globe */}
-        <div className="absolute inset-0 opacity-40">
+        <div className="absolute inset-0 opacity-60">
           <Canvas 
             camera={{ position: [0, 0, 5], fov: 50 }}
-            gl={{ antialias: true, alpha: true }}
-            dpr={[1, 2]}
+            gl={{ antialias: true, alpha: true, precision: "highp" }}
+            dpr={[1.5, 2.5]}
           >
             <OrbitControls
               enableZoom={true}
@@ -414,13 +445,13 @@ const Index = () => {
               <ScrollReveal key={index} delay={index * 0.1}>
                 <AnimatedCard glowColor={stat.color}>
                   <div className="p-8 text-center">
-                    <motion.div
-                      whileHover={{ rotate: 360, scale: 1.2 }}
-                      transition={{ duration: 0.6 }}
-                      className={`inline-block bg-gradient-to-br ${stat.color} w-16 h-16 rounded-xl flex items-center justify-center mb-4`}
-                    >
-                      <stat.icon className="h-8 w-8 text-white" />
-                    </motion.div>
+                  <motion.div
+                    whileHover={{ rotate: 360, scale: 1.2 }}
+                    transition={{ duration: 0.6 }}
+                    className={`inline-block bg-gradient-to-br ${stat.color} w-16 h-16 rounded-xl flex items-center justify-center mb-4 glow-pulse`}
+                  >
+                    <stat.icon className="h-8 w-8 text-white glow-strong" />
+                  </motion.div>
                     <div className="text-4xl font-bold mb-2">
                       <AnimatedCounter end={stat.value} />
                       {stat.suffix || "+"}
@@ -463,7 +494,7 @@ const Index = () => {
                       >
                         {item.step}
                       </motion.div>
-                      <item.icon className="h-12 w-12 mx-auto mb-4 text-primary" />
+                      <item.icon className="h-12 w-12 mx-auto mb-4 text-primary glow-pulse" />
                       <h3 className="text-xl font-bold mb-3">{item.title}</h3>
                       <p className="text-muted-foreground">{item.description}</p>
                     </div>
