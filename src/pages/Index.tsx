@@ -43,39 +43,24 @@ const latLngToVector3 = (lat: number, lng: number, radius: number) => {
   return new THREE.Vector3(x, y, z);
 };
 
-const CityMarker = ({ position, color, name }: { position: THREE.Vector3; color: string; name: string }) => {
-  const labelPosition = position.clone().multiplyScalar(1.15);
+const CityMarker = ({ position, name }: { position: THREE.Vector3; name: string }) => {
+  const labelPosition = position.clone().multiplyScalar(1.12);
   
   return (
     <group position={position}>
-      {/* Pulsing marker */}
+      {/* Simple marker dot */}
       <mesh>
-        <sphereGeometry args={[0.04, 16, 16]} />
-        <meshBasicMaterial color={color} />
-      </mesh>
-      {/* Inner glow */}
-      <mesh>
-        <sphereGeometry args={[0.06, 16, 16]} />
-        <meshBasicMaterial color={color} transparent opacity={0.5} />
-      </mesh>
-      {/* Outer glow ring */}
-      <mesh>
-        <ringGeometry args={[0.05, 0.08, 32]} />
-        <meshBasicMaterial color={color} transparent opacity={0.7} side={THREE.DoubleSide} />
-      </mesh>
-      {/* Vertical beam */}
-      <mesh position={[0, 0.2, 0]}>
-        <cylinderGeometry args={[0.008, 0.008, 0.4, 8]} />
-        <meshBasicMaterial color={color} transparent opacity={0.6} />
+        <sphereGeometry args={[0.03, 16, 16]} />
+        <meshBasicMaterial color="#ffffff" />
       </mesh>
       {/* City name label */}
       <Text
         position={labelPosition}
-        fontSize={0.08}
-        color={color}
+        fontSize={0.06}
+        color="#ffffff"
         anchorX="center"
         anchorY="middle"
-        outlineWidth={0.005}
+        outlineWidth={0.003}
         outlineColor="#000000"
       >
         {name}
@@ -98,70 +83,26 @@ const Globe = () => {
 
   return (
     <group>
-      {/* Enhanced lighting for 4K clarity */}
-      <ambientLight intensity={1.2} />
-      <directionalLight position={[5, 3, 5]} intensity={2} color="#ffffff" />
-      <pointLight position={[10, 10, 10]} intensity={2} color="#ffffff" />
-      <pointLight position={[-10, -10, -10]} intensity={1.2} color="#6eb5ff" />
-      <pointLight position={[0, -10, 0]} intensity={0.8} color="#4a90e2" />
+      {/* Clean, bright lighting for clear visibility */}
+      <ambientLight intensity={2.5} />
+      <directionalLight position={[5, 3, 5]} intensity={2.5} color="#ffffff" />
+      <pointLight position={[10, 10, 10]} intensity={1.5} color="#ffffff" />
       
       {/* Main Earth Sphere with 4K textures */}
-      <Sphere args={[2, 256, 256]}>
+      <Sphere args={[2, 128, 128]}>
         <meshStandardMaterial
           map={earthTexture}
           bumpMap={bumpMap}
-          bumpScale={0.05}
-          emissive="#1a3a5e"
-          emissiveIntensity={0.6}
-          metalness={0.3}
-          roughness={0.5}
-        />
-      </Sphere>
-      
-      {/* Bright inner glow */}
-      <Sphere args={[2.06, 64, 64]}>
-        <meshBasicMaterial
-          color="#5ab4ff"
-          transparent
-          opacity={0.35}
-          side={THREE.BackSide}
-        />
-      </Sphere>
-      
-      {/* Mid atmosphere layer */}
-      <Sphere args={[2.12, 64, 64]}>
-        <meshBasicMaterial
-          color="#00d4ff"
-          transparent
-          opacity={0.25}
-          side={THREE.BackSide}
-        />
-      </Sphere>
-      
-      {/* Outer atmosphere glow */}
-      <Sphere args={[2.2, 64, 64]}>
-        <meshBasicMaterial
-          color="#00ffff"
-          transparent
-          opacity={0.18}
-          side={THREE.BackSide}
-        />
-      </Sphere>
-
-      {/* Extreme outer glow */}
-      <Sphere args={[2.3, 64, 64]}>
-        <meshBasicMaterial
-          color="#66ffff"
-          transparent
-          opacity={0.1}
-          side={THREE.BackSide}
+          bumpScale={0.08}
+          metalness={0.1}
+          roughness={0.6}
         />
       </Sphere>
       
       {/* Tech City Markers with labels */}
       {techCities.map((city, index) => {
         const position = latLngToVector3(city.lat, city.lng, 2.05);
-        return <CityMarker key={index} position={position} color={city.color} name={city.name} />;
+        return <CityMarker key={index} position={position} name={city.name} />;
       })}
     </group>
   );
