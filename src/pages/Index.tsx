@@ -448,9 +448,9 @@ const Index = () => {
                   <motion.div
                     whileHover={{ rotate: 360, scale: 1.2 }}
                     transition={{ duration: 0.6 }}
-                    className={`inline-block bg-gradient-to-br ${stat.color} w-16 h-16 rounded-xl flex items-center justify-center mb-4 glow-pulse`}
+                    className={`inline-block bg-gradient-to-br ${stat.color} w-16 h-16 rounded-xl flex items-center justify-center mb-4`}
                   >
-                    <stat.icon className="h-8 w-8 text-white glow-strong" />
+                    <stat.icon className="h-8 w-8 text-white" />
                   </motion.div>
                     <div className="text-4xl font-bold mb-2">
                       <AnimatedCounter end={stat.value} />
@@ -494,7 +494,7 @@ const Index = () => {
                       >
                         {item.step}
                       </motion.div>
-                      <item.icon className="h-12 w-12 mx-auto mb-4 text-primary glow-pulse" />
+                      <item.icon className="h-12 w-12 mx-auto mb-4 text-primary" />
                       <h3 className="text-xl font-bold mb-3">{item.title}</h3>
                       <p className="text-muted-foreground">{item.description}</p>
                     </div>
