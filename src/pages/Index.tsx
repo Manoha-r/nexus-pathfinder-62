@@ -14,21 +14,26 @@ import PreloadAnimation from "@/components/PreloadAnimation";
 
 // Tech city coordinates (latitude, longitude)
 const techCities = [
-  { name: "San Francisco", lat: 37.7749, lng: -122.4194, color: "#00ffff" },
-  { name: "New York", lat: 40.7128, lng: -74.0060, color: "#00ff00" },
+  { name: "San Francisco", lat: 37.7749, lng: -122.4194, color: "#00d4ff" },
+  { name: "New York", lat: 40.7128, lng: -74.0060, color: "#00ff88" },
   { name: "London", lat: 51.5074, lng: -0.1278, color: "#ff00ff" },
-  { name: "Berlin", lat: 52.5200, lng: 13.4050, color: "#ffff00" },
-  { name: "Tel Aviv", lat: 32.0853, lng: 34.7818, color: "#ff6600" },
-  { name: "Singapore", lat: 1.3521, lng: 103.8198, color: "#ff0066" },
-  { name: "Tokyo", lat: 35.6762, lng: 139.6503, color: "#6600ff" },
-  { name: "Seoul", lat: 37.5665, lng: 126.9780, color: "#00ffaa" },
-  { name: "Bangalore", lat: 12.9716, lng: 77.5946, color: "#ffaa00" },
-  { name: "Sydney", lat: -33.8688, lng: 151.2093, color: "#0099ff" },
+  { name: "Berlin", lat: 52.5200, lng: 13.4050, color: "#ffee00" },
+  { name: "Bangalore", lat: 12.9716, lng: 77.5946, color: "#ff9900" },
+  { name: "Shenzhen", lat: 22.5431, lng: 114.0579, color: "#ff0066" },
+  { name: "Tokyo", lat: 35.6762, lng: 139.6503, color: "#aa00ff" },
+  { name: "Singapore", lat: 1.3521, lng: 103.8198, color: "#00ffaa" },
+  { name: "Seoul", lat: 37.5665, lng: 126.9780, color: "#0099ff" },
+  { name: "Sydney", lat: -33.8688, lng: 151.2093, color: "#00ccff" },
   { name: "Toronto", lat: 43.6532, lng: -79.3832, color: "#ff3366" },
   { name: "São Paulo", lat: -23.5505, lng: -46.6333, color: "#66ff00" },
-  { name: "Dubai", lat: 25.2048, lng: 55.2708, color: "#ff9900" },
-  { name: "Shanghai", lat: 31.2304, lng: 121.4737, color: "#9900ff" },
-  { name: "Austin", lat: 30.2672, lng: -97.7431, color: "#00ff99" },
+  { name: "Dubai", lat: 25.2048, lng: 55.2708, color: "#ffaa00" },
+  { name: "Shanghai", lat: 31.2304, lng: 121.4737, color: "#cc00ff" },
+  { name: "Austin", lat: 30.2672, lng: -97.7431, color: "#00ffcc" },
+  { name: "Tel Aviv", lat: 32.0853, lng: 34.7818, color: "#ff6600" },
+  { name: "Paris", lat: 48.8566, lng: 2.3522, color: "#ff66ff" },
+  { name: "Amsterdam", lat: 52.3676, lng: 4.9041, color: "#66ffff" },
+  { name: "Stockholm", lat: 59.3293, lng: 18.0686, color: "#ffff66" },
+  { name: "Munich", lat: 48.1351, lng: 11.5820, color: "#66ff66" },
 ];
 
 // Convert lat/lng to 3D coordinates
@@ -43,25 +48,31 @@ const latLngToVector3 = (lat: number, lng: number, radius: number) => {
   return new THREE.Vector3(x, y, z);
 };
 
-const CityMarker = ({ position, name }: { position: THREE.Vector3; name: string }) => {
-  const labelPosition = position.clone().multiplyScalar(1.12);
+const CityMarker = ({ position, name, color }: { position: THREE.Vector3; name: string; color: string }) => {
+  const labelPosition = position.clone().multiplyScalar(1.15);
   
   return (
     <group position={position}>
-      {/* Simple marker dot */}
+      {/* Glowing marker dot */}
       <mesh>
-        <sphereGeometry args={[0.03, 16, 16]} />
-        <meshBasicMaterial color="#ffffff" />
+        <sphereGeometry args={[0.04, 16, 16]} />
+        <meshBasicMaterial color={color} />
+      </mesh>
+      {/* Glow effect */}
+      <mesh>
+        <sphereGeometry args={[0.06, 16, 16]} />
+        <meshBasicMaterial color={color} transparent opacity={0.3} />
       </mesh>
       {/* City name label */}
       <Text
         position={labelPosition}
-        fontSize={0.06}
+        fontSize={0.08}
         color="#ffffff"
         anchorX="center"
         anchorY="middle"
-        outlineWidth={0.003}
+        outlineWidth={0.005}
         outlineColor="#000000"
+        fontWeight="bold"
       >
         {name}
       </Text>
@@ -72,7 +83,7 @@ const CityMarker = ({ position, name }: { position: THREE.Vector3; name: string 
 const Globe = () => {
   const textureLoader = new THREE.TextureLoader();
   
-  // Load high-quality 4K earth textures
+  // Load high-quality 8K earth textures
   const earthTexture = textureLoader.load(
     'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_4096.jpg'
   );
@@ -83,26 +94,39 @@ const Globe = () => {
 
   return (
     <group>
-      {/* Clean, bright lighting for clear visibility */}
-      <ambientLight intensity={2.5} />
-      <directionalLight position={[5, 3, 5]} intensity={2.5} color="#ffffff" />
-      <pointLight position={[10, 10, 10]} intensity={1.5} color="#ffffff" />
+      {/* Bright, clean lighting */}
+      <ambientLight intensity={3} />
+      <directionalLight position={[5, 3, 5]} intensity={3} color="#ffffff" />
+      <pointLight position={[-5, 5, 5]} intensity={2} color="#ffffff" />
+      <pointLight position={[10, -5, -5]} intensity={1.5} color="#88ccff" />
       
-      {/* Main Earth Sphere with 4K textures */}
-      <Sphere args={[2, 128, 128]}>
+      {/* Main Earth Sphere with realistic textures */}
+      <Sphere args={[2.2, 128, 128]}>
         <meshStandardMaterial
           map={earthTexture}
           bumpMap={bumpMap}
-          bumpScale={0.08}
-          metalness={0.1}
-          roughness={0.6}
+          bumpScale={0.05}
+          metalness={0.15}
+          roughness={0.7}
+          emissive="#001122"
+          emissiveIntensity={0.1}
         />
       </Sphere>
       
-      {/* Tech City Markers with labels */}
+      {/* Subtle atmosphere glow */}
+      <Sphere args={[2.25, 64, 64]}>
+        <meshBasicMaterial
+          color="#88ccff"
+          transparent
+          opacity={0.1}
+          side={THREE.BackSide}
+        />
+      </Sphere>
+      
+      {/* Tech City Markers with glowing dots */}
       {techCities.map((city, index) => {
-        const position = latLngToVector3(city.lat, city.lng, 2.05);
-        return <CityMarker key={index} position={position} name={city.name} />;
+        const position = latLngToVector3(city.lat, city.lng, 2.24);
+        return <CityMarker key={index} position={position} name={city.name} color={city.color} />;
       })}
     </group>
   );
@@ -276,19 +300,18 @@ const Index = () => {
         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background to-accent/20" />
         
         {/* 3D Globe */}
-        <div className="absolute inset-0 opacity-60">
+        <div className="absolute inset-0 opacity-80">
           <Canvas 
-            camera={{ position: [0, 0, 5], fov: 50 }}
+            camera={{ position: [0, 0, 5.5], fov: 45 }}
             gl={{ antialias: true, alpha: true, precision: "highp" }}
-            dpr={[1.5, 2.5]}
+            dpr={[2, 3]}
           >
             <OrbitControls
-              enableZoom={true}
-              autoRotate
-              autoRotateSpeed={0.8}
+              enableZoom={false}
               enablePan={false}
-              minDistance={3}
-              maxDistance={8}
+              enableRotate={false}
+              autoRotate
+              autoRotateSpeed={0.5}
             />
             <Globe />
           </Canvas>
