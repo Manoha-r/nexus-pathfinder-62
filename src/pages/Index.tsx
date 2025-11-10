@@ -83,42 +83,34 @@ const CityMarker = ({ position, name, color }: { position: THREE.Vector3; name: 
 const Globe = () => {
   const textureLoader = new THREE.TextureLoader();
   
-  // Load high-quality 8K earth textures
+  // Load earth texture for land/water distinction
   const earthTexture = textureLoader.load(
     'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_4096.jpg'
-  );
-  
-  const bumpMap = textureLoader.load(
-    'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_normal_2048.jpg'
   );
 
   return (
     <group>
-      {/* Bright, clean lighting */}
-      <ambientLight intensity={3} />
-      <directionalLight position={[5, 3, 5]} intensity={3} color="#ffffff" />
-      <pointLight position={[-5, 5, 5]} intensity={2} color="#ffffff" />
-      <pointLight position={[10, -5, -5]} intensity={1.5} color="#88ccff" />
+      {/* Bright lighting for clean look */}
+      <ambientLight intensity={2.5} />
+      <directionalLight position={[5, 3, 5]} intensity={2.5} color="#ffffff" />
+      <pointLight position={[-5, 5, 5]} intensity={1.5} color="#ffffff" />
       
-      {/* Main Earth Sphere with realistic textures */}
+      {/* Main Earth Sphere with bright blue and green styling */}
       <Sphere args={[2.2, 128, 128]}>
-        <meshStandardMaterial
+        <meshPhongMaterial
           map={earthTexture}
-          bumpMap={bumpMap}
-          bumpScale={0.05}
-          metalness={0.15}
-          roughness={0.7}
-          emissive="#001122"
-          emissiveIntensity={0.1}
+          color="#1e90ff"
+          shininess={15}
+          specular="#88ccff"
         />
       </Sphere>
       
       {/* Subtle atmosphere glow */}
-      <Sphere args={[2.25, 64, 64]}>
+      <Sphere args={[2.28, 64, 64]}>
         <meshBasicMaterial
-          color="#88ccff"
+          color="#4da6ff"
           transparent
-          opacity={0.1}
+          opacity={0.15}
           side={THREE.BackSide}
         />
       </Sphere>
