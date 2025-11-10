@@ -83,25 +83,32 @@ const CityMarker = ({ position, name, color }: { position: THREE.Vector3; name: 
 const Globe = () => {
   const textureLoader = new THREE.TextureLoader();
   
-  // Load earth texture for land/water distinction
+  // Load earth texture with political boundaries
   const earthTexture = textureLoader.load(
     'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_4096.jpg'
+  );
+  
+  // Load specular map for water shine
+  const specularMap = textureLoader.load(
+    'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_specular_2048.jpg'
   );
 
   return (
     <group>
       {/* Bright lighting for clean look */}
-      <ambientLight intensity={2.5} />
-      <directionalLight position={[5, 3, 5]} intensity={2.5} color="#ffffff" />
-      <pointLight position={[-5, 5, 5]} intensity={1.5} color="#ffffff" />
+      <ambientLight intensity={2.8} />
+      <directionalLight position={[5, 3, 5]} intensity={2.8} color="#ffffff" />
+      <pointLight position={[-5, 5, 5]} intensity={1.8} color="#ffffff" />
+      <pointLight position={[0, -3, 5]} intensity={1.2} color="#4da6ff" />
       
       {/* Main Earth Sphere with bright blue and green styling */}
       <Sphere args={[2.2, 128, 128]}>
         <meshPhongMaterial
           map={earthTexture}
-          color="#1e90ff"
-          shininess={15}
-          specular="#88ccff"
+          specularMap={specularMap}
+          color="#2196f3"
+          shininess={20}
+          specular="#66ccff"
         />
       </Sphere>
       
@@ -153,6 +160,7 @@ const AnimatedCounter = ({ end, duration = 2 }: { end: number; duration?: number
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoaded, setIsLoaded] = useState(false);
+  const [showGlobe, setShowGlobe] = useState(true);
 
   const stats = [
     { label: "Students Guided", value: 10000, icon: Users, color: "from-blue-500 to-cyan-500" },
@@ -291,39 +299,45 @@ const Index = () => {
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background to-accent/20" />
         
-        {/* 3D Globe */}
-        <div className="absolute inset-0 opacity-80">
-          <Canvas 
-            camera={{ position: [0, 0, 5.5], fov: 45 }}
-            gl={{ antialias: true, alpha: true, precision: "highp" }}
-            dpr={[2, 3]}
-          >
-            <OrbitControls
-              enableZoom={false}
-              enablePan={false}
-              enableRotate={false}
-              autoRotate
-              autoRotateSpeed={0.5}
-            />
-            <Globe />
-          </Canvas>
-          
-          {/* Radial glow overlay */}
-          <div className="absolute inset-0 pointer-events-none">
+        {/* 3D Globe - Clickable to toggle */}
+        <AnimatePresence>
+          {showGlobe && (
             <motion.div
-              animate={{
-                opacity: [0.4, 0.7, 0.4],
-                scale: [1, 1.05, 1],
-              }}
-              transition={{
-                duration: 5,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-              className="absolute inset-0 bg-gradient-radial from-blue-500/20 via-transparent to-transparent blur-3xl"
-            />
-          </div>
-        </div>
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 0.85, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.5 }}
+              className="absolute inset-0 cursor-pointer"
+              onClick={() => setShowGlobe(!showGlobe)}
+            >
+              <Canvas 
+                camera={{ position: [0, 0, 5.5], fov: 45 }}
+                gl={{ antialias: true, alpha: true, precision: "highp" }}
+                dpr={[2, 3]}
+              >
+                <OrbitControls
+                  enableZoom={false}
+                  enablePan={false}
+                  enableRotate={false}
+                  autoRotate
+                  autoRotateSpeed={0.5}
+                />
+                <Globe />
+              </Canvas>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        
+        {/* Toggle button */}
+        <motion.button
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1 }}
+          onClick={() => setShowGlobe(!showGlobe)}
+          className="absolute top-8 right-8 z-20 bg-card/80 backdrop-blur-sm border border-border rounded-full p-3 hover:bg-card transition-colors"
+        >
+          <Globe2 className="h-6 w-6 text-primary" />
+        </motion.button>
 
         {/* Hero Content */}
         <motion.div
