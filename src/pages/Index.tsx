@@ -83,41 +83,47 @@ const CityMarker = ({ position, name, color }: { position: THREE.Vector3; name: 
 const Globe = () => {
   const textureLoader = new THREE.TextureLoader();
   
-  // Load earth texture with political boundaries
+  // Load high-quality natural earth texture with realistic colors
   const earthTexture = textureLoader.load(
-    'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_4096.jpg'
+    'https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg'
   );
   
-  // Load specular map for water shine
+  // Load specular map for shiny ocean water
   const specularMap = textureLoader.load(
-    'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_specular_2048.jpg'
+    'https://unpkg.com/three-globe/example/img/earth-water.png'
+  );
+  
+  // Load bump map for terrain elevation
+  const bumpMap = textureLoader.load(
+    'https://unpkg.com/three-globe/example/img/earth-topology.png'
   );
 
   return (
     <group>
-      {/* Bright lighting for clean look */}
-      <ambientLight intensity={2.8} />
-      <directionalLight position={[5, 3, 5]} intensity={2.8} color="#ffffff" />
-      <pointLight position={[-5, 5, 5]} intensity={1.8} color="#ffffff" />
-      <pointLight position={[0, -3, 5]} intensity={1.2} color="#4da6ff" />
+      {/* Natural bright lighting */}
+      <ambientLight intensity={1.5} />
+      <directionalLight position={[5, 3, 5]} intensity={2.5} color="#ffffff" />
+      <directionalLight position={[-3, 1, -2]} intensity={0.8} color="#ffffff" />
+      <pointLight position={[0, 5, 0]} intensity={0.5} color="#ffeedd" />
       
-      {/* Main Earth Sphere with bright blue and green styling */}
+      {/* Realistic Earth Sphere with natural colors */}
       <Sphere args={[2.2, 128, 128]}>
         <meshPhongMaterial
           map={earthTexture}
           specularMap={specularMap}
-          color="#2196f3"
-          shininess={20}
-          specular="#66ccff"
+          bumpMap={bumpMap}
+          bumpScale={0.02}
+          shininess={25}
+          specular="#88ccff"
         />
       </Sphere>
       
-      {/* Subtle atmosphere glow */}
-      <Sphere args={[2.28, 64, 64]}>
+      {/* Atmosphere glow - soft blue */}
+      <Sphere args={[2.3, 64, 64]}>
         <meshBasicMaterial
-          color="#4da6ff"
+          color="#88ccff"
           transparent
-          opacity={0.15}
+          opacity={0.12}
           side={THREE.BackSide}
         />
       </Sphere>
