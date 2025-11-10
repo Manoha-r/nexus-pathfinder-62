@@ -10,7 +10,9 @@ import PageTransition from "@/components/PageTransition";
 import PreloadAnimation from "@/components/PreloadAnimation";
 
 const Branches = () => {
-  const [searchQuery, setSearchQuery] = useState("");
+  const urlParams = new URLSearchParams(window.location.search);
+  const initialSearch = urlParams.get('search') || '';
+  const [searchQuery, setSearchQuery] = useState(initialSearch);
   const [isLoaded, setIsLoaded] = useState(false);
 
   const branches = [

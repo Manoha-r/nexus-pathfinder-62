@@ -163,10 +163,16 @@ const AnimatedCounter = ({ end, duration = 2 }: { end: number; duration?: number
   return <span>{count.toLocaleString()}</span>;
 };
 
-const Index = () => {
+  const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoaded, setIsLoaded] = useState(false);
   const [showGlobe, setShowGlobe] = useState(true);
+  
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      window.location.href = `/branches?search=${encodeURIComponent(searchQuery)}`;
+    }
+  };
 
   const stats = [
     { label: "Students Guided", value: 10000, icon: Users, color: "from-blue-500 to-cyan-500" },
@@ -384,10 +390,11 @@ const Index = () => {
                 placeholder="Search branches, roles, or skills..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                 className="w-full pl-12 pr-4 py-4 rounded-xl bg-card/50 backdrop-blur-sm border border-border focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
               />
             </div>
-            <Button size="lg" className="px-8">
+            <Button size="lg" className="px-8" onClick={handleSearch}>
               Search
             </Button>
           </motion.div>
