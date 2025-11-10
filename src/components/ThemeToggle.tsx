@@ -30,40 +30,30 @@ const ThemeToggle = () => {
       width: 200vmax;
       height: 200vmax;
       border-radius: 50%;
-      background: ${isDark ? "radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.8) 50%, transparent 100%)" : "radial-gradient(circle, rgba(10,15,36,0.95) 0%, rgba(10,15,36,0.8) 50%, transparent 100%)"};
+      background: ${isDark ? "rgba(255,255,255,0.15)" : "rgba(10,15,36,0.15)"};
       z-index: 9999;
       pointer-events: none;
-      transition: transform 2.5s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     `;
     document.body.appendChild(overlay);
-
-    // Cascade through elements
-    allElements.forEach((el, index) => {
-      setTimeout(() => {
-        el.classList.add('theme-transitioning');
-      }, (index / allElements.length) * 1500);
-    });
 
     // Expand overlay
     requestAnimationFrame(() => {
       overlay.style.transform = "translate(-50%, -50%) scale(1)";
     });
 
-    // Apply theme change
+    // Apply theme change immediately
     setTimeout(() => {
       setIsDark(!isDark);
       localStorage.setItem("theme", newTheme);
       document.documentElement.classList.toggle("dark", !isDark);
-    }, 800);
+    }, 100);
 
     // Cleanup
     setTimeout(() => {
       overlay.remove();
-      allElements.forEach(el => {
-        el.classList.remove('theme-transitioning');
-      });
       setIsTransitioning(false);
-    }, 3000);
+    }, 200);
   };
 
   return (

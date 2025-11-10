@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
+import { roadmapsData } from "@/data/roadmapsData";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -33,133 +34,8 @@ const Roadmap = () => {
     );
   };
 
-  // Sample roadmap data
-  const roadmap = {
-    role: "Full Stack Developer",
-    description:
-      "Master both frontend and backend development to build complete web applications",
-    duration: "6-12 months",
-    difficulty: "Intermediate",
-    steps: [
-      {
-        title: "1. Master the Fundamentals",
-        duration: "2-3 months",
-        items: [
-          {
-            name: "HTML & CSS Basics",
-            resources: [
-              {
-                title: "freeCodeCamp - Responsive Web Design",
-                url: "https://www.freecodecamp.org/",
-              },
-              {
-                title: "MDN Web Docs",
-                url: "https://developer.mozilla.org/",
-              },
-            ],
-          },
-          {
-            name: "JavaScript Fundamentals",
-            resources: [
-              {
-                title: "JavaScript.info",
-                url: "https://javascript.info/",
-              },
-            ],
-          },
-          {
-            name: "Git & GitHub",
-            resources: [
-              { title: "Git Documentation", url: "https://git-scm.com/doc" },
-            ],
-          },
-        ],
-      },
-      {
-        title: "2. Frontend Development",
-        duration: "2-3 months",
-        items: [
-          {
-            name: "React.js",
-            resources: [
-              { title: "React Official Docs", url: "https://react.dev/" },
-            ],
-          },
-          {
-            name: "State Management (Redux/Context)",
-            resources: [
-              { title: "Redux Toolkit", url: "https://redux-toolkit.js.org/" },
-            ],
-          },
-        ],
-      },
-      {
-        title: "3. Backend Development",
-        duration: "2-3 months",
-        items: [
-          {
-            name: "Node.js & Express",
-            resources: [
-              { title: "Node.js Docs", url: "https://nodejs.org/" },
-            ],
-          },
-          {
-            name: "RESTful APIs",
-            resources: [
-              { title: "REST API Tutorial", url: "https://restfulapi.net/" },
-            ],
-          },
-        ],
-      },
-      {
-        title: "4. Databases",
-        duration: "1-2 months",
-        items: [
-          {
-            name: "SQL (PostgreSQL/MySQL)",
-            resources: [
-              { title: "PostgreSQL Tutorial", url: "https://www.postgresql.org/docs/" },
-            ],
-          },
-          {
-            name: "NoSQL (MongoDB)",
-            resources: [
-              { title: "MongoDB University", url: "https://university.mongodb.com/" },
-            ],
-          },
-        ],
-      },
-      {
-        title: "5. DevOps & Deployment",
-        duration: "1-2 months",
-        items: [
-          {
-            name: "Docker Basics",
-            resources: [
-              { title: "Docker Documentation", url: "https://docs.docker.com/" },
-            ],
-          },
-          {
-            name: "Cloud Deployment (AWS/Heroku)",
-            resources: [
-              { title: "AWS Free Tier", url: "https://aws.amazon.com/free/" },
-            ],
-          },
-        ],
-      },
-    ],
-    projects: [
-      "Build a personal portfolio website",
-      "Create a full-stack e-commerce application",
-      "Develop a real-time chat application",
-      "Build a task management system with authentication",
-    ],
-    certifications: [
-      "AWS Certified Developer - Associate",
-      "Meta Front-End Developer Professional Certificate",
-      "MongoDB Associate Developer Certification",
-    ],
-  };
+  // Get roadmap data based on roleId
+  const roadmap = roadmapsData[roleId || "default"] || roadmapsData["default"];
 
   const progress =
     roadmap.steps.length > 0
@@ -523,26 +399,29 @@ const Roadmap = () => {
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {[
-                  { platform: "YouTube Channels", count: "50+ Videos", icon: "🎥" },
-                  { platform: "Online Courses", count: "20+ Platforms", icon: "📚" },
-                  { platform: "Documentation", count: "100+ Guides", icon: "📖" },
-                  { platform: "Practice Sites", count: "15+ Platforms", icon: "💻" },
-                  { platform: "Communities", count: "30+ Groups", icon: "👥" },
-                  { platform: "Newsletters", count: "25+ Sources", icon: "📧" },
+                  { platform: "YouTube Channels", count: "50+ Videos", icon: "🎥", url: "https://www.youtube.com/" },
+                  { platform: "Online Courses", count: "20+ Platforms", icon: "📚", url: "https://www.coursera.org/" },
+                  { platform: "Documentation", count: "100+ Guides", icon: "📖", url: "https://developer.mozilla.org/" },
+                  { platform: "Practice Sites", count: "15+ Platforms", icon: "💻", url: "https://www.leetcode.com/" },
+                  { platform: "Communities", count: "30+ Groups", icon: "👥", url: "https://discord.com/" },
+                  { platform: "Newsletters", count: "25+ Sources", icon: "📧", url: "https://newsletter.pragmaticengineer.com/" },
                 ].map((resource, index) => (
-                  <motion.div
+                  <motion.a
                     key={index}
+                    href={resource.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     initial={{ opacity: 0, scale: 0.9 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.1 }}
                     whileHover={{ scale: 1.05, y: -5 }}
-                    className="p-6 rounded-lg border-2 border-pink-500/20 bg-pink-500/5 text-center cursor-pointer"
+                    className="p-6 rounded-lg border-2 border-pink-500/20 bg-pink-500/5 text-center cursor-pointer block"
                   >
                     <div className="text-4xl mb-3">{resource.icon}</div>
                     <h3 className="font-bold text-lg mb-1">{resource.platform}</h3>
                     <p className="text-sm text-muted-foreground">{resource.count}</p>
-                  </motion.div>
+                  </motion.a>
                 ))}
               </div>
             </div>
