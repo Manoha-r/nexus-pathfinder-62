@@ -33,7 +33,7 @@ const ThemeToggle = () => {
       background: ${isDark ? "rgba(255,255,255,0.15)" : "rgba(10,15,36,0.15)"};
       z-index: 9999;
       pointer-events: none;
-      transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     `;
     document.body.appendChild(overlay);
 
@@ -47,13 +47,13 @@ const ThemeToggle = () => {
       setIsDark(!isDark);
       localStorage.setItem("theme", newTheme);
       document.documentElement.classList.toggle("dark", !isDark);
-    }, 100);
+    }, 200);
 
     // Cleanup
     setTimeout(() => {
       overlay.remove();
       setIsTransitioning(false);
-    }, 200);
+    }, 400);
   };
 
   return (

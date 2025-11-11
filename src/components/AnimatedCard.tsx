@@ -58,21 +58,20 @@ const AnimatedCard = ({ children, className = "", glowColor = "rgba(59, 130, 246
       transition={{ type: "spring", stiffness: 300, damping: 25 }}
       className="relative"
     >
-      {/* Animated border */}
+      {/* Animated border with gradient moving through */}
       <motion.div
-        className="absolute inset-0 rounded-xl opacity-0 pointer-events-none"
+        className="absolute inset-0 rounded-xl pointer-events-none"
         animate={{
           opacity: isHovered ? 1 : 0,
         }}
+        transition={{ duration: 0.3 }}
         style={{
+          padding: "2px",
           background: `linear-gradient(90deg, 
             transparent 0%, 
-            ${glowColor} 25%, 
-            transparent 50%, 
-            ${glowColor} 75%, 
+            ${glowColor} 50%, 
             transparent 100%)`,
           backgroundSize: "200% 100%",
-          padding: "2px",
           WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
           WebkitMaskComposite: "xor",
           maskComposite: "exclude",
@@ -83,7 +82,7 @@ const AnimatedCard = ({ children, className = "", glowColor = "rgba(59, 130, 246
             backgroundPosition: isHovered ? ["0% 0%", "200% 0%"] : "0% 0%",
           }}
           transition={{
-            duration: 2,
+            duration: 1.5,
             repeat: Infinity,
             ease: "linear",
           }}
@@ -91,9 +90,7 @@ const AnimatedCard = ({ children, className = "", glowColor = "rgba(59, 130, 246
           style={{
             background: `linear-gradient(90deg, 
               transparent 0%, 
-              ${glowColor} 25%, 
-              transparent 50%, 
-              ${glowColor} 75%, 
+              ${glowColor} 50%, 
               transparent 100%)`,
             backgroundSize: "200% 100%",
           }}
