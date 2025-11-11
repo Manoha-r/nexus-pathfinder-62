@@ -50,14 +50,14 @@ const Navbar = () => {
               >
                 {/* Glow background on hover */}
                 <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-primary/20 via-accent/20 to-primary/20 opacity-0 group-hover:opacity-100"
+                  className="absolute inset-0 bg-gradient-to-r from-primary/10 via-primary/20 to-primary/10 opacity-0 group-hover:opacity-100"
                   initial={{ x: "-100%" }}
                   whileHover={{ x: "100%" }}
                   transition={{ duration: 0.7, ease: "easeInOut" }}
                 />
                 
                 {/* Subtle background */}
-                <div className="absolute inset-0 bg-accent/0 group-hover:bg-accent/50 transition-colors duration-300" />
+                <div className="absolute inset-0 bg-muted/0 group-hover:bg-muted transition-colors duration-300" />
                 
                 <span className={`relative text-sm font-medium transition-all duration-300 ${
                   location.pathname === link.path

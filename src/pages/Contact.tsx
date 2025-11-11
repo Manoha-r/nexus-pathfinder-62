@@ -10,6 +10,7 @@ import AnimatedCard from "@/components/AnimatedCard";
 import ScrollReveal from "@/components/ScrollReveal";
 import PageTransition from "@/components/PageTransition";
 import PreloadAnimation from "@/components/PreloadAnimation";
+import AnimatedBackground from "@/components/AnimatedBackground";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -51,7 +52,8 @@ const Contact = () => {
       <PreloadAnimation type="contact" onComplete={() => setIsLoaded(true)} />
       {isLoaded && (
         <PageTransition>
-          <div className="min-h-screen bg-background py-20 px-4 pt-24">
+          <AnimatedBackground />
+          <div className="min-h-screen bg-background py-20 px-4 pt-24 relative z-10">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <motion.div

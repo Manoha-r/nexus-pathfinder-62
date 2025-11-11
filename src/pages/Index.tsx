@@ -11,6 +11,8 @@ import AnimatedCard from "@/components/AnimatedCard";
 import ScrollReveal from "@/components/ScrollReveal";
 import PageTransition from "@/components/PageTransition";
 import PreloadAnimation from "@/components/PreloadAnimation";
+import AnimatedBackground from "@/components/AnimatedBackground";
+import InteractiveHero from "@/components/InteractiveHero";
 
 // Tech city coordinates (latitude, longitude)
 const techCities = [
@@ -306,7 +308,8 @@ const AnimatedCounter = ({ end, duration = 2 }: { end: number; duration?: number
       <PreloadAnimation type="home" onComplete={() => setIsLoaded(true)} />
       {isLoaded && (
         <PageTransition>
-          <div className="min-h-screen bg-background pt-16">
+          <AnimatedBackground />
+          <div className="min-h-screen bg-background pt-16 relative z-10">
       {/* Hero Section with 3D Globe */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background to-accent/20" />
@@ -371,32 +374,19 @@ const AnimatedCounter = ({ end, duration = 2 }: { end: number; duration?: number
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.8 }}
-            className="text-xl md:text-2xl text-muted-foreground mb-8"
+            className="text-xl md:text-2xl text-muted-foreground mb-12"
           >
             Navigate from your branch to your dream career with AI-powered guidance
           </motion.p>
 
-          {/* Search Bar */}
+          {/* Interactive Hero Element */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.6, duration: 0.8 }}
-            className="flex gap-2 max-w-2xl mx-auto mb-8"
+            className="relative h-64 mb-8 max-w-4xl mx-auto"
           >
-            <div className="relative flex-1">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-              <input
-                type="text"
-                placeholder="Search branches, roles, or skills..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                className="w-full pl-12 pr-4 py-4 rounded-xl bg-card/50 backdrop-blur-sm border border-border focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-              />
-            </div>
-            <Button size="lg" className="px-8" onClick={handleSearch}>
-              Search
-            </Button>
+            <InteractiveHero />
           </motion.div>
 
           <motion.div
