@@ -90,9 +90,13 @@ const Branches = () => {
     },
   ];
 
-  const filteredBranches = branches.filter((branch) =>
-    branch.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredBranches = branches.filter((branch) => {
+    const query = searchQuery.toLowerCase();
+    return (
+      branch.name.toLowerCase().includes(query) ||
+      branch.description.toLowerCase().includes(query)
+    );
+  });
 
   return (
     <>
