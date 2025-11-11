@@ -25,36 +25,58 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
+          <Link to="/" className="flex items-center gap-2 relative group">
             <motion.div
-              whileHover={{ scale: 1.05, rotate: 5 }}
-              className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent"
+              whileHover={{ scale: 1.08, rotate: [0, -3, 3, 0] }}
+              transition={{ duration: 0.5, ease: "easeInOut" }}
+              className="relative"
             >
-              NextStep
+              {/* Glow effect behind logo */}
+              <div className="absolute inset-0 bg-gradient-to-r from-primary to-accent opacity-0 group-hover:opacity-30 blur-xl transition-opacity duration-500" />
+              
+              <span className="relative text-2xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent bg-[length:200%_auto] group-hover:animate-[shimmer_2s_linear_infinite]">
+                NextStep
+              </span>
             </motion.div>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-2">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
-                className="relative group"
+                className="relative group px-4 py-2 rounded-lg overflow-hidden"
               >
-                <span className={`text-sm font-medium transition-colors ${
+                {/* Glow background on hover */}
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-primary/20 via-accent/20 to-primary/20 opacity-0 group-hover:opacity-100"
+                  initial={{ x: "-100%" }}
+                  whileHover={{ x: "100%" }}
+                  transition={{ duration: 0.7, ease: "easeInOut" }}
+                />
+                
+                {/* Subtle background */}
+                <div className="absolute inset-0 bg-accent/0 group-hover:bg-accent/50 transition-colors duration-300" />
+                
+                <span className={`relative text-sm font-medium transition-all duration-300 ${
                   location.pathname === link.path
                     ? "text-primary"
-                    : "text-muted-foreground hover:text-foreground"
+                    : "text-muted-foreground group-hover:text-foreground group-hover:scale-105 inline-block"
                 }`}>
                   {link.label}
                 </span>
+                
+                {/* Active indicator */}
                 <motion.div
-                  className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary"
-                  initial={{ scaleX: 0 }}
-                  animate={{ scaleX: location.pathname === link.path ? 1 : 0 }}
-                  whileHover={{ scaleX: 1 }}
-                  transition={{ duration: 0.2 }}
+                  className="absolute -bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary to-transparent"
+                  initial={{ scaleX: 0, opacity: 0 }}
+                  animate={{ 
+                    scaleX: location.pathname === link.path ? 1 : 0,
+                    opacity: location.pathname === link.path ? 1 : 0
+                  }}
+                  whileHover={{ scaleX: 1, opacity: 1 }}
+                  transition={{ duration: 0.3 }}
                 />
               </Link>
             ))}
@@ -98,13 +120,21 @@ const Navbar = () => {
                 <Link
                   to={link.path}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className={`block py-3 px-4 rounded-lg transition-colors ${
+                  className={`block py-3 px-4 rounded-lg transition-all duration-300 relative overflow-hidden group ${
                     location.pathname === link.path
-                      ? "bg-primary text-primary-foreground"
-                      : "hover:bg-accent"
+                      ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
+                      : "hover:bg-accent hover:pl-6"
                   }`}
                 >
-                  {link.label}
+                  <span className="relative z-10">{link.label}</span>
+                  {location.pathname !== link.path && (
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-primary/10 to-accent/10"
+                      initial={{ x: "-100%" }}
+                      whileHover={{ x: "0%" }}
+                      transition={{ duration: 0.3 }}
+                    />
+                  )}
                 </Link>
               </motion.div>
             ))}
