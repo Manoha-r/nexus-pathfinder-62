@@ -60,41 +60,34 @@ const AnimatedCard = ({ children, className = "", glowColor = "rgba(59, 130, 246
     >
       {/* Animated border with gradient moving through */}
       <motion.div
-        className="absolute inset-0 rounded-xl pointer-events-none"
+        className="absolute -inset-[2px] rounded-xl pointer-events-none overflow-hidden"
         animate={{
           opacity: isHovered ? 1 : 0,
         }}
         transition={{ duration: 0.3 }}
-        style={{
-          padding: "2px",
-          background: `linear-gradient(90deg, 
-            transparent 0%, 
-            ${glowColor} 50%, 
-            transparent 100%)`,
-          backgroundSize: "200% 100%",
-          WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-          WebkitMaskComposite: "xor",
-          maskComposite: "exclude",
-        }}
       >
         <motion.div
           animate={{
-            backgroundPosition: isHovered ? ["0% 0%", "200% 0%"] : "0% 0%",
+            rotate: isHovered ? 360 : 0,
           }}
           transition={{
-            duration: 1.5,
+            duration: 3,
             repeat: Infinity,
             ease: "linear",
           }}
-          className="absolute inset-0 rounded-xl"
+          className="absolute inset-0"
           style={{
-            background: `linear-gradient(90deg, 
-              transparent 0%, 
-              ${glowColor} 50%, 
-              transparent 100%)`,
-            backgroundSize: "200% 100%",
+            background: `conic-gradient(from 0deg, 
+              transparent 0deg, 
+              ${glowColor} 60deg, 
+              transparent 120deg, 
+              ${glowColor} 180deg,
+              transparent 240deg,
+              ${glowColor} 300deg,
+              transparent 360deg)`,
           }}
         />
+        <div className="absolute inset-[2px] bg-card rounded-xl" />
       </motion.div>
 
       {/* Glow effect on hover */}
