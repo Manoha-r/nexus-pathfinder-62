@@ -58,7 +58,7 @@ const AnimatedCard = ({ children, className = "", glowColor = "rgba(59, 130, 246
       transition={{ type: "spring", stiffness: 300, damping: 25 }}
       className="relative"
     >
-      {/* Animated border with gradient moving through */}
+      {/* Animated border with mixed colors moving through */}
       <motion.div
         className="absolute -inset-[2px] rounded-xl pointer-events-none overflow-hidden"
         animate={{
@@ -78,13 +78,13 @@ const AnimatedCard = ({ children, className = "", glowColor = "rgba(59, 130, 246
           className="absolute inset-0"
           style={{
             background: `conic-gradient(from 0deg, 
-              transparent 0deg, 
-              ${glowColor} 60deg, 
-              transparent 120deg, 
-              ${glowColor} 180deg,
-              transparent 240deg,
-              ${glowColor} 300deg,
-              transparent 360deg)`,
+              ${glowColor} 0deg,
+              rgba(168, 85, 247, 0.8) 60deg,
+              rgba(34, 197, 94, 0.8) 120deg, 
+              rgba(249, 115, 22, 0.8) 180deg,
+              rgba(59, 130, 246, 0.8) 240deg,
+              rgba(234, 179, 8, 0.8) 300deg,
+              ${glowColor} 360deg)`,
           }}
         />
         <div className="absolute inset-[2px] bg-card rounded-xl" />
