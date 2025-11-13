@@ -51,17 +51,22 @@ const latLngToVector3 = (lat: number, lng: number, radius: number) => {
 };
 
 const CityMarker = ({ position, name, color }: { position: THREE.Vector3; name: string; color: string }) => {
-  const labelPosition = position.clone().multiplyScalar(1.2);
+  const labelPosition = position.clone().multiplyScalar(1.12);
   
-  // Calculate rotation to point arrow outward from globe center
+  // Calculate rotation to point arrow INWARD to globe center (reversed)
   const direction = position.clone().normalize();
   const up = new THREE.Vector3(0, 1, 0);
   const quaternion = new THREE.Quaternion();
   quaternion.setFromUnitVectors(up, direction);
   
+  // Rotate 180 degrees to reverse arrow direction
+  const reverseRotation = new THREE.Quaternion();
+  reverseRotation.setFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI);
+  quaternion.multiply(reverseRotation);
+  
   return (
     <group position={position} quaternion={quaternion}>
-      {/* Arrow Pin - Cone shape pointing out */}
+      {/* Arrow Pin - Cone shape pointing INWARD */}
       <mesh position={[0, 0.08, 0]}>
         <coneGeometry args={[0.04, 0.15, 8]} />
         <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.5} />
@@ -91,16 +96,16 @@ const CityMarker = ({ position, name, color }: { position: THREE.Vector3; name: 
         <meshBasicMaterial color={color} transparent opacity={0.4} side={THREE.DoubleSide} />
       </mesh>
       
-      {/* City name label */}
+      {/* City name label - smaller font */}
       <Text
         position={labelPosition}
-        fontSize={0.08}
+        fontSize={0.05}
         color="#ffffff"
         anchorX="center"
         anchorY="middle"
-        outlineWidth={0.005}
+        outlineWidth={0.003}
         outlineColor="#000000"
-        fontWeight="bold"
+        fontWeight="normal"
       >
         {name}
       </Text>
