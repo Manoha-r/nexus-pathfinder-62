@@ -51,20 +51,46 @@ const latLngToVector3 = (lat: number, lng: number, radius: number) => {
 };
 
 const CityMarker = ({ position, name, color }: { position: THREE.Vector3; name: string; color: string }) => {
-  const labelPosition = position.clone().multiplyScalar(1.15);
+  const labelPosition = position.clone().multiplyScalar(1.2);
+  
+  // Calculate rotation to point arrow outward from globe center
+  const direction = position.clone().normalize();
+  const up = new THREE.Vector3(0, 1, 0);
+  const quaternion = new THREE.Quaternion();
+  quaternion.setFromUnitVectors(up, direction);
   
   return (
-    <group position={position}>
-      {/* Glowing marker dot */}
-      <mesh>
-        <sphereGeometry args={[0.04, 16, 16]} />
-        <meshBasicMaterial color={color} />
+    <group position={position} quaternion={quaternion}>
+      {/* Arrow Pin - Cone shape pointing out */}
+      <mesh position={[0, 0.08, 0]}>
+        <coneGeometry args={[0.04, 0.15, 8]} />
+        <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.5} />
       </mesh>
-      {/* Glow effect */}
-      <mesh>
-        <sphereGeometry args={[0.06, 16, 16]} />
-        <meshBasicMaterial color={color} transparent opacity={0.3} />
+      
+      {/* Arrow Pin Base - Cylinder */}
+      <mesh position={[0, 0, 0]}>
+        <cylinderGeometry args={[0.015, 0.015, 0.12, 8]} />
+        <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.3} />
       </mesh>
+      
+      {/* Pin Point/Base - Small sphere at attachment point */}
+      <mesh position={[0, -0.06, 0]}>
+        <sphereGeometry args={[0.025, 16, 16]} />
+        <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.8} />
+      </mesh>
+      
+      {/* Glow effect around pin */}
+      <mesh position={[0, 0.05, 0]}>
+        <sphereGeometry args={[0.08, 16, 16]} />
+        <meshBasicMaterial color={color} transparent opacity={0.2} />
+      </mesh>
+      
+      {/* Pulsing glow ring */}
+      <mesh position={[0, -0.06, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <ringGeometry args={[0.04, 0.06, 16]} />
+        <meshBasicMaterial color={color} transparent opacity={0.4} side={THREE.DoubleSide} />
+      </mesh>
+      
       {/* City name label */}
       <Text
         position={labelPosition}
