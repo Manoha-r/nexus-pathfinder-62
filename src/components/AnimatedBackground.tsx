@@ -10,8 +10,20 @@ interface Particle {
   delay: number;
 }
 
+interface FloatingShape {
+  id: number;
+  x: number;
+  y: number;
+  size: number;
+  rotation: number;
+  duration: number;
+  delay: number;
+  shape: 'cube' | 'sphere' | 'pyramid' | 'torus';
+}
+
 const AnimatedBackground = () => {
   const [particles, setParticles] = useState<Particle[]>([]);
+  const [shapes, setShapes] = useState<FloatingShape[]>([]);
 
   useEffect(() => {
     const particleCount = 30;
@@ -29,6 +41,26 @@ const AnimatedBackground = () => {
     }
 
     setParticles(newParticles);
+
+    // Generate 3D floating shapes
+    const shapeCount = 8;
+    const newShapes: FloatingShape[] = [];
+    const shapeTypes: FloatingShape['shape'][] = ['cube', 'sphere', 'pyramid', 'torus'];
+
+    for (let i = 0; i < shapeCount; i++) {
+      newShapes.push({
+        id: i,
+        x: Math.random() * 100,
+        y: Math.random() * 100,
+        size: Math.random() * 60 + 40,
+        rotation: Math.random() * 360,
+        duration: Math.random() * 25 + 20,
+        delay: Math.random() * 5,
+        shape: shapeTypes[Math.floor(Math.random() * shapeTypes.length)],
+      });
+    }
+
+    setShapes(newShapes);
   }, []);
 
   return (
@@ -75,6 +107,118 @@ const AnimatedBackground = () => {
         }}
         className="absolute bottom-20 left-1/4 w-80 h-80 bg-primary/15 rounded-full blur-3xl"
       />
+
+      {/* 3D Floating Shapes */}
+      {shapes.map((shape) => {
+        const getShapeElement = () => {
+          const baseClasses = "absolute backdrop-blur-sm border border-primary/20";
+          const style = {
+            width: shape.size,
+            height: shape.size,
+            left: `${shape.x}%`,
+            top: `${shape.y}%`,
+          };
+
+          switch (shape.shape) {
+            case 'cube':
+              return (
+                <motion.div
+                  key={`${shape.id}-cube`}
+                  className={`${baseClasses} bg-gradient-to-br from-primary/10 to-accent/10`}
+                  style={style}
+                  initial={{ rotateX: shape.rotation, rotateY: 0, opacity: 0 }}
+                  animate={{
+                    rotateX: [shape.rotation, shape.rotation + 360],
+                    rotateY: [0, 360],
+                    y: [0, -50, 0],
+                    opacity: [0.3, 0.6, 0.3],
+                  }}
+                  transition={{
+                    duration: shape.duration,
+                    repeat: Infinity,
+                    delay: shape.delay,
+                    ease: "easeInOut",
+                  }}
+                />
+              );
+            case 'sphere':
+              return (
+                <motion.div
+                  key={`${shape.id}-sphere`}
+                  className={`${baseClasses} rounded-full bg-gradient-to-br from-accent/10 to-primary/10`}
+                  style={style}
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{
+                    scale: [0.8, 1.2, 0.8],
+                    x: [0, 30, 0],
+                    y: [0, -40, 0],
+                    opacity: [0.3, 0.5, 0.3],
+                  }}
+                  transition={{
+                    duration: shape.duration,
+                    repeat: Infinity,
+                    delay: shape.delay,
+                    ease: "easeInOut",
+                  }}
+                />
+              );
+            case 'pyramid':
+              return (
+                <motion.div
+                  key={`${shape.id}-pyramid`}
+                  className={`${baseClasses} bg-gradient-to-t from-primary/10 to-transparent`}
+                  style={{
+                    ...style,
+                    clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)',
+                  }}
+                  initial={{ rotateZ: shape.rotation, opacity: 0 }}
+                  animate={{
+                    rotateZ: [shape.rotation, shape.rotation + 360],
+                    y: [0, -60, 0],
+                    opacity: [0.3, 0.6, 0.3],
+                  }}
+                  transition={{
+                    duration: shape.duration,
+                    repeat: Infinity,
+                    delay: shape.delay,
+                    ease: "easeInOut",
+                  }}
+                />
+              );
+            case 'torus':
+              return (
+                <motion.div
+                  key={`${shape.id}-torus`}
+                  className="absolute"
+                  style={{
+                    width: shape.size,
+                    height: shape.size,
+                    left: `${shape.x}%`,
+                    top: `${shape.y}%`,
+                  }}
+                  initial={{ rotateY: 0, opacity: 0 }}
+                  animate={{
+                    rotateY: [0, 360],
+                    x: [0, -40, 0],
+                    y: [0, -50, 0],
+                    opacity: [0.3, 0.5, 0.3],
+                  }}
+                  transition={{
+                    duration: shape.duration,
+                    repeat: Infinity,
+                    delay: shape.delay,
+                    ease: "easeInOut",
+                  }}
+                >
+                  <div className="w-full h-full rounded-full border-8 border-primary/20 bg-transparent" />
+                  <div className="absolute inset-[30%] rounded-full bg-background" />
+                </motion.div>
+              );
+          }
+        };
+
+        return getShapeElement();
+      })}
 
       {/* Floating particles */}
       {particles.map((particle) => (
