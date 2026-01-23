@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import Branches from "./pages/Branches";
 import BranchDetail from "./pages/BranchDetail";
 import Roadmap from "./pages/Roadmap";
+import BeginnerRoadmap from "./pages/BeginnerRoadmap";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
@@ -27,6 +28,7 @@ const App = () => (
           <Route path="/branches" element={<Branches />} />
           <Route path="/branch/:branchId" element={<BranchDetail />} />
           <Route path="/roadmap/:roleId" element={<Roadmap />} />
+          <Route path="/beginner-roadmap" element={<BeginnerRoadmap />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/install" element={<Install />} />
