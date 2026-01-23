@@ -2,8 +2,9 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Search, Code, Server, Cpu, Cog, Building2, FlaskConical, Zap, Plane } from "lucide-react";
+import { Search, Code, Server, Cpu, Cog, Building2, FlaskConical, Zap, Plane, GraduationCap, Sparkles, Target, Clock, Rocket, ArrowRight } from "lucide-react";
 import AnimatedCard from "@/components/AnimatedCard";
 import ScrollReveal from "@/components/ScrollReveal";
 import PageTransition from "@/components/PageTransition";
@@ -137,6 +138,75 @@ const Branches = () => {
               />
             </motion.div>
           </motion.div>
+
+          {/* A-Z Beginner Roadmap CTA */}
+          <ScrollReveal delay={0.1}>
+            <motion.div
+              whileHover={{ scale: 1.01 }}
+              className="mb-12"
+            >
+              <Link to="/beginner-roadmap">
+                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-green-500/20 via-blue-500/20 to-purple-500/20 border border-green-500/30 p-6 md:p-8 group cursor-pointer">
+                  {/* Animated background shimmer */}
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+                    animate={{ x: ["-100%", "100%"] }}
+                    transition={{ repeat: Infinity, duration: 3, ease: "linear" }}
+                  />
+                  
+                  <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div className="flex items-center gap-4">
+                      <motion.div
+                        animate={{ rotate: [0, 10, -10, 0], scale: [1, 1.05, 1] }}
+                        transition={{ repeat: Infinity, duration: 3 }}
+                        className="p-4 rounded-2xl bg-gradient-to-br from-green-500 via-blue-500 to-purple-500 shadow-lg shadow-green-500/30"
+                      >
+                        <GraduationCap className="h-10 w-10 text-white" />
+                      </motion.div>
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <Sparkles className="h-4 w-4 text-yellow-500" />
+                          <span className="text-sm font-medium text-green-500">Complete Beginner?</span>
+                        </div>
+                        <h3 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 bg-clip-text text-transparent">
+                          Start with A-Z Roadmap
+                        </h3>
+                        <p className="text-muted-foreground mt-1">
+                          Step-by-step guide from absolute zero to job-ready developer
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-4">
+                      <div className="hidden md:flex items-center gap-6 text-sm">
+                        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-500/10 border border-green-500/20">
+                          <Target className="h-4 w-4 text-green-500" />
+                          <span>26 Steps</span>
+                        </div>
+                        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20">
+                          <Clock className="h-4 w-4 text-blue-500" />
+                          <span>6-12 Months</span>
+                        </div>
+                        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/20">
+                          <Rocket className="h-4 w-4 text-purple-500" />
+                          <span>Job Ready</span>
+                        </div>
+                      </div>
+                      <Button size="lg" className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 shadow-lg group/btn">
+                        <span>Start Learning</span>
+                        <ArrowRight className="ml-2 h-5 w-5 group-hover/btn:translate-x-1 transition-transform" />
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  {/* Decorative letters */}
+                  <div className="absolute -right-4 -bottom-6 text-[140px] font-black text-green-500/5 leading-none select-none">
+                    A-Z
+                  </div>
+                </div>
+              </Link>
+            </motion.div>
+          </ScrollReveal>
 
           {/* Branches Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
