@@ -13,6 +13,11 @@ import {
   ChevronRight,
   Star,
   Clock,
+  GraduationCap,
+  Sparkles,
+  Target,
+  Rocket,
+  ArrowRight,
 } from "lucide-react";
 import AnimatedCard from "@/components/AnimatedCard";
 import ScrollReveal from "@/components/ScrollReveal";
@@ -102,6 +107,75 @@ const BranchDetail = () => {
             </AnimatedCard>
           </div>
         </motion.div>
+
+        {/* A-Z Beginner Roadmap CTA */}
+        <ScrollReveal delay={0.15}>
+          <motion.div
+            whileHover={{ scale: 1.01 }}
+            className="mb-12"
+          >
+            <Link to="/beginner-roadmap">
+              <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-primary/20 via-accent/20 to-green-500/20 border border-primary/30 p-6 md:p-8 group cursor-pointer">
+                {/* Animated background shimmer */}
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+                  animate={{ x: ["-100%", "100%"] }}
+                  transition={{ repeat: Infinity, duration: 3, ease: "linear" }}
+                />
+                
+                <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+                  <div className="flex items-center gap-4">
+                    <motion.div
+                      animate={{ rotate: [0, 10, -10, 0] }}
+                      transition={{ repeat: Infinity, duration: 3 }}
+                      className="p-4 rounded-2xl bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/30"
+                    >
+                      <GraduationCap className="h-10 w-10 text-white" />
+                    </motion.div>
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <Sparkles className="h-4 w-4 text-yellow-500" />
+                        <span className="text-sm font-medium text-primary">New to {branchName}?</span>
+                      </div>
+                      <h3 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary via-accent to-green-500 bg-clip-text text-transparent">
+                        Start with A-Z Roadmap
+                      </h3>
+                      <p className="text-muted-foreground mt-1">
+                        Complete beginner guide from zero to job-ready in 26 clear steps
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-4">
+                    <div className="hidden md:flex items-center gap-6 text-sm">
+                      <div className="flex items-center gap-2">
+                        <Target className="h-4 w-4 text-green-500" />
+                        <span>26 Steps</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Clock className="h-4 w-4 text-blue-500" />
+                        <span>6-12 Months</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Rocket className="h-4 w-4 text-purple-500" />
+                        <span>Job Ready</span>
+                      </div>
+                    </div>
+                    <Button size="lg" className="group/btn shadow-lg">
+                      <span>View Roadmap</span>
+                      <ArrowRight className="ml-2 h-5 w-5 group-hover/btn:translate-x-1 transition-transform" />
+                    </Button>
+                  </div>
+                </div>
+                
+                {/* Decorative letters */}
+                <div className="absolute -right-4 -bottom-4 text-[120px] font-black text-primary/5 leading-none select-none">
+                  A-Z
+                </div>
+              </div>
+            </Link>
+          </motion.div>
+        </ScrollReveal>
 
         {/* Filters */}
         <motion.div
