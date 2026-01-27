@@ -899,10 +899,18 @@ const BeginnerRoadmapAZ = () => {
           {roadmapAZ.map((item, index) => (
             <motion.div
               key={item.letter}
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: index * 0.02 }}
-              className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold transition-all cursor-pointer ${
+              initial={{ scale: 0, rotate: -180 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ delay: index * 0.02, type: "spring", stiffness: 200 }}
+              whileHover={{ 
+                scale: 1.3, 
+                rotate: 10,
+                boxShadow: completedLetters.includes(item.letter) 
+                  ? "0 0 25px rgba(34, 197, 94, 0.8)" 
+                  : "0 0 25px rgba(59, 130, 246, 0.6)"
+              }}
+              whileTap={{ scale: 0.9 }}
+              className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold transition-all cursor-pointer relative ${
                 completedLetters.includes(item.letter)
                   ? "bg-green-500 text-white shadow-lg shadow-green-500/50"
                   : "bg-secondary text-muted-foreground hover:bg-primary/20"
@@ -910,11 +918,19 @@ const BeginnerRoadmapAZ = () => {
               onClick={() => toggleExpand(item.letter)}
             >
               {item.letter}
+              {/* Pulse ring for completed */}
+              {completedLetters.includes(item.letter) && (
+                <motion.div
+                  className="absolute inset-0 rounded-lg bg-green-500/30"
+                  animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0, 0.5] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                />
+              )}
             </motion.div>
           ))}
         </div>
         
-        <div className="relative w-full bg-secondary rounded-full h-3 overflow-hidden">
+        <div className="relative w-full bg-secondary rounded-full h-3 overflow-hidden group">
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
@@ -927,13 +943,35 @@ const BeginnerRoadmapAZ = () => {
               className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
             />
           </motion.div>
+          {/* Glow effect on hover */}
+          <motion.div
+            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity"
+            style={{ boxShadow: "0 0 20px rgba(59, 130, 246, 0.5)" }}
+          />
         </div>
       </motion.div>
 
       {/* Roadmap Letters */}
       <div className="relative">
-        {/* Vertical Line */}
-        <div className="absolute left-6 top-0 bottom-0 w-1 bg-gradient-to-b from-primary via-accent to-green-500 opacity-30 rounded-full" />
+        {/* Animated Vertical Line */}
+        <motion.div 
+          className="absolute left-6 top-0 bottom-0 w-1 bg-gradient-to-b from-primary via-accent to-green-500 rounded-full"
+          initial={{ scaleY: 0, opacity: 0 }}
+          animate={{ scaleY: 1, opacity: 0.3 }}
+          transition={{ duration: 1 }}
+          style={{ originY: 0 }}
+        />
+        
+        {/* Animated pulse on the line */}
+        <motion.div
+          className="absolute left-5 w-3 h-3 rounded-full bg-primary"
+          animate={{ 
+            y: [0, 1000],
+            opacity: [0, 1, 1, 0],
+            scale: [0.5, 1, 1, 0.5]
+          }}
+          transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+        />
 
         <div className="space-y-6">
           {roadmapAZ.map((item, index) => {
@@ -943,168 +981,279 @@ const BeginnerRoadmapAZ = () => {
             return (
               <motion.div
                 key={item.letter}
-                initial={{ opacity: 0, x: -30 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.05 }}
+                initial={{ opacity: 0, x: -50, rotateY: -30 }}
+                animate={{ opacity: 1, x: 0, rotateY: 0 }}
+                transition={{ delay: index * 0.05, type: "spring" }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true, margin: "-50px" }}
                 className="relative"
+                style={{ perspective: 1000 }}
               >
-                {/* Letter Circle */}
+                {/* Letter Circle with enhanced animations */}
                 <motion.button
                   onClick={() => toggleComplete(item.letter)}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
+                  whileHover={{ scale: 1.2, rotate: 10 }}
+                  whileTap={{ scale: 0.85, rotate: -10 }}
                   className="absolute left-0 top-4 z-10"
                 >
                   <motion.div
                     animate={{
-                      scale: isCompleted ? [1, 1.1, 1] : 1,
+                      scale: isCompleted ? [1, 1.15, 1] : 1,
                       boxShadow: isCompleted 
-                        ? "0 0 20px rgba(34, 197, 94, 0.6)" 
-                        : "0 0 10px rgba(59, 130, 246, 0.4)"
+                        ? ["0 0 20px rgba(34, 197, 94, 0.6)", "0 0 40px rgba(34, 197, 94, 0.8)", "0 0 20px rgba(34, 197, 94, 0.6)"]
+                        : "0 0 15px rgba(59, 130, 246, 0.4)"
                     }}
-                    className={`w-12 h-12 rounded-full flex items-center justify-center text-xl font-black ${
+                    transition={{ duration: 1.5, repeat: isCompleted ? Infinity : 0 }}
+                    className={`w-12 h-12 rounded-full flex items-center justify-center text-xl font-black relative ${
                       isCompleted
                         ? "bg-gradient-to-br from-green-400 to-green-600 text-white"
                         : "bg-gradient-to-br from-primary to-accent text-white"
                     }`}
                   >
-                    {isCompleted ? <CheckCircle2 className="h-6 w-6" /> : item.letter}
+                    {isCompleted ? (
+                      <motion.div
+                        initial={{ scale: 0, rotate: -180 }}
+                        animate={{ scale: 1, rotate: 0 }}
+                        transition={{ type: "spring", stiffness: 300 }}
+                      >
+                        <CheckCircle2 className="h-6 w-6" />
+                      </motion.div>
+                    ) : (
+                      item.letter
+                    )}
+                    {/* Rotating ring */}
+                    <motion.div
+                      className="absolute inset-0 rounded-full border-2 border-dashed border-white/30"
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                    />
                   </motion.div>
                 </motion.button>
 
-                {/* Connector Line */}
+                {/* Connector Line with animation */}
                 <motion.div
-                  initial={{ scaleX: 0 }}
-                  animate={{ scaleX: 1 }}
+                  initial={{ scaleX: 0, opacity: 0 }}
+                  animate={{ scaleX: 1, opacity: 1 }}
                   transition={{ delay: index * 0.05 + 0.2 }}
                   className="absolute left-12 top-9 w-8 h-0.5 bg-gradient-to-r from-primary to-accent origin-left"
                 />
+                
+                {/* Pulse dot on connector */}
+                <motion.div
+                  className="absolute left-16 top-8 w-2 h-2 rounded-full bg-accent"
+                  animate={{ 
+                    scale: [0, 1.5, 0],
+                    opacity: [0, 1, 0]
+                  }}
+                  transition={{ duration: 2, repeat: Infinity, delay: index * 0.2 }}
+                />
 
-                {/* Content Card */}
+                {/* Content Card with enhanced hover */}
                 <div className="ml-20">
-                  <Card className={`overflow-hidden transition-all duration-300 ${
-                    isCompleted 
-                      ? "bg-green-500/10 border-green-500/30" 
-                      : "bg-card/80 backdrop-blur-sm hover:shadow-xl"
-                  }`}>
-                    {/* Header */}
-                    <motion.div
-                      className="p-5 cursor-pointer"
-                      onClick={() => toggleExpand(item.letter)}
-                      whileHover={{ backgroundColor: "rgba(255,255,255,0.02)" }}
-                    >
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-2">
-                            <span className="text-3xl font-black bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                              {item.letter}
-                            </span>
-                            <ArrowRight className="h-5 w-5 text-muted-foreground" />
-                            <h3 className="text-2xl font-bold">{item.title}</h3>
-                          </div>
-                          <p className="text-muted-foreground mb-3">{item.subtitle}</p>
-                          <div className="flex gap-2">
-                            <Badge variant="outline" className="text-xs">
-                              <Clock className="h-3 w-3 mr-1" />
-                              {item.duration}
-                            </Badge>
-                            <Badge variant="outline" className="text-xs">
-                              <BookOpen className="h-3 w-3 mr-1" />
-                              {item.topics.length} topics
-                            </Badge>
-                          </div>
-                        </div>
+                  <motion.div
+                    whileHover={{ 
+                      scale: 1.01,
+                      rotateX: 2,
+                      rotateY: -2,
+                      boxShadow: isCompleted 
+                        ? "0 25px 50px -12px rgba(34, 197, 94, 0.25)"
+                        : "0 25px 50px -12px rgba(0, 0, 0, 0.25)"
+                    }}
+                    style={{ transformStyle: "preserve-3d" }}
+                  >
+                    <Card className={`overflow-hidden transition-all duration-300 ${
+                      isCompleted 
+                        ? "bg-green-500/10 border-green-500/30" 
+                        : "bg-card/80 backdrop-blur-sm"
+                    }`}>
+                      {/* Header with hover effect */}
+                      <motion.div
+                        className="p-5 cursor-pointer relative overflow-hidden group"
+                        onClick={() => toggleExpand(item.letter)}
+                        whileHover={{ backgroundColor: "rgba(255,255,255,0.03)" }}
+                      >
+                        {/* Hover shimmer effect */}
                         <motion.div
-                          animate={{ rotate: isExpanded ? 180 : 0 }}
-                          className="p-2 hover:bg-accent/20 rounded-lg transition-colors"
-                        >
-                          <ChevronDown className="h-6 w-6" />
-                        </motion.div>
-                      </div>
-                    </motion.div>
-
-                    {/* Expandable Content */}
-                    <AnimatePresence>
-                      {isExpanded && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.3 }}
-                          className="overflow-hidden"
-                        >
-                          <div className="px-5 pb-5 space-y-4">
-                            {item.topics.map((topic, topicIndex) => (
-                              <motion.div
-                                key={topicIndex}
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: topicIndex * 0.1 }}
-                                className="border border-border/50 rounded-xl p-4 hover:border-primary/30 transition-colors bg-background/50"
+                          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100"
+                          initial={{ x: "-100%" }}
+                          whileHover={{ x: "100%" }}
+                          transition={{ duration: 0.6 }}
+                        />
+                        
+                        <div className="flex items-start justify-between relative z-10">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-3 mb-2">
+                              <motion.span 
+                                className="text-3xl font-black bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent"
+                                whileHover={{ scale: 1.1 }}
                               >
-                                <div className="flex items-start gap-3 mb-3">
-                                  <div className="p-2 rounded-lg bg-primary/20">
-                                    <Zap className="h-4 w-4 text-primary" />
-                                  </div>
-                                  <div>
-                                    <h4 className="font-bold text-lg">{topic.name}</h4>
-                                    <p className="text-sm text-muted-foreground">{topic.description}</p>
-                                  </div>
-                                </div>
-
-                                {/* Resources */}
-                                <div className="ml-11 space-y-3">
-                                  <div className="space-y-2">
-                                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Resources</p>
-                                    <div className="grid gap-2">
-                                      {topic.resources.map((resource, resIndex) => (
-                                        <motion.a
-                                          key={resIndex}
-                                          href={resource.url}
-                                          target="_blank"
-                                          rel="noopener noreferrer"
-                                          whileHover={{ x: 5, scale: 1.01 }}
-                                          className="flex items-center gap-2 p-2 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors group"
-                                        >
-                                          <span className={`p-1 rounded ${getResourceColor(resource.type)}`}>
-                                            {getResourceIcon(resource.type)}
-                                          </span>
-                                          <span className="text-sm flex-1">{resource.title}</span>
-                                          <ExternalLink className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                        </motion.a>
-                                      ))}
-                                    </div>
-                                  </div>
-
-                                  {/* Tips */}
-                                  <div className="space-y-2">
-                                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
-                                      <Lightbulb className="h-3 w-3 text-yellow-500" />
-                                      Pro Tips
-                                    </p>
-                                    <div className="space-y-1">
-                                      {topic.tips.map((tip, tipIndex) => (
-                                        <motion.div
-                                          key={tipIndex}
-                                          initial={{ opacity: 0, x: -10 }}
-                                          animate={{ opacity: 1, x: 0 }}
-                                          transition={{ delay: tipIndex * 0.05 }}
-                                          className="flex items-start gap-2 text-sm text-muted-foreground"
-                                        >
-                                          <Star className="h-3 w-3 text-yellow-500 mt-1 flex-shrink-0" />
-                                          <span>{tip}</span>
-                                        </motion.div>
-                                      ))}
-                                    </div>
-                                  </div>
-                                </div>
+                                {item.letter}
+                              </motion.span>
+                              <motion.div
+                                animate={{ x: [0, 5, 0] }}
+                                transition={{ duration: 1.5, repeat: Infinity }}
+                              >
+                                <ArrowRight className="h-5 w-5 text-muted-foreground" />
                               </motion.div>
-                            ))}
+                              <motion.h3 
+                                className="text-2xl font-bold"
+                                whileHover={{ x: 5 }}
+                                transition={{ type: "spring" }}
+                              >
+                                {item.title}
+                              </motion.h3>
+                            </div>
+                            <p className="text-muted-foreground mb-3">{item.subtitle}</p>
+                            <div className="flex gap-2">
+                              <motion.div whileHover={{ scale: 1.1 }}>
+                                <Badge variant="outline" className="text-xs">
+                                  <Clock className="h-3 w-3 mr-1" />
+                                  {item.duration}
+                                </Badge>
+                              </motion.div>
+                              <motion.div whileHover={{ scale: 1.1 }}>
+                                <Badge variant="outline" className="text-xs">
+                                  <BookOpen className="h-3 w-3 mr-1" />
+                                  {item.topics.length} topics
+                                </Badge>
+                              </motion.div>
+                            </div>
                           </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </Card>
+                          <motion.div
+                            animate={{ rotate: isExpanded ? 180 : 0 }}
+                            whileHover={{ scale: 1.2, backgroundColor: "rgba(168, 85, 247, 0.2)" }}
+                            className="p-2 rounded-lg transition-colors"
+                          >
+                            <ChevronDown className="h-6 w-6" />
+                          </motion.div>
+                        </div>
+                      </motion.div>
+
+                      {/* Expandable Content with enhanced animations */}
+                      <AnimatePresence>
+                        {isExpanded && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.4, ease: "easeInOut" }}
+                            className="overflow-hidden"
+                          >
+                            <div className="px-5 pb-5 space-y-4">
+                              {item.topics.map((topic, topicIndex) => (
+                                <motion.div
+                                  key={topicIndex}
+                                  initial={{ opacity: 0, y: 20, rotateX: -10 }}
+                                  animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                                  transition={{ delay: topicIndex * 0.1, type: "spring" }}
+                                  whileHover={{ 
+                                    scale: 1.02, 
+                                    y: -3,
+                                    boxShadow: "0 10px 30px -10px rgba(0,0,0,0.2)"
+                                  }}
+                                  className="border border-border/50 rounded-xl p-4 hover:border-primary/50 transition-all bg-background/50 cursor-pointer"
+                                >
+                                  <div className="flex items-start gap-3 mb-3">
+                                    <motion.div 
+                                      className="p-2 rounded-lg bg-primary/20"
+                                      whileHover={{ rotate: 360, scale: 1.1 }}
+                                      transition={{ duration: 0.4 }}
+                                    >
+                                      <Zap className="h-4 w-4 text-primary" />
+                                    </motion.div>
+                                    <div>
+                                      <motion.h4 
+                                        className="font-bold text-lg"
+                                        whileHover={{ x: 3 }}
+                                      >
+                                        {topic.name}
+                                      </motion.h4>
+                                      <p className="text-sm text-muted-foreground">{topic.description}</p>
+                                    </div>
+                                  </div>
+
+                                  {/* Resources with enhanced hover */}
+                                  <div className="ml-11 space-y-3">
+                                    <div className="space-y-2">
+                                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Resources</p>
+                                      <div className="grid gap-2">
+                                        {topic.resources.map((resource, resIndex) => (
+                                          <motion.a
+                                            key={resIndex}
+                                            href={resource.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            initial={{ opacity: 0, x: -10 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: resIndex * 0.05 }}
+                                            whileHover={{ 
+                                              x: 8, 
+                                              scale: 1.02,
+                                              backgroundColor: "rgba(59, 130, 246, 0.1)"
+                                            }}
+                                            whileTap={{ scale: 0.98 }}
+                                            className="flex items-center gap-2 p-2 rounded-lg bg-secondary/50 hover:bg-secondary transition-all group"
+                                          >
+                                            <motion.span 
+                                              className={`p-1 rounded ${getResourceColor(resource.type)}`}
+                                              whileHover={{ rotate: 20, scale: 1.1 }}
+                                            >
+                                              {getResourceIcon(resource.type)}
+                                            </motion.span>
+                                            <span className="text-sm flex-1">{resource.title}</span>
+                                            <motion.div
+                                              initial={{ opacity: 0, x: -5 }}
+                                              whileHover={{ opacity: 1, x: 0 }}
+                                              className="opacity-0 group-hover:opacity-100 transition-opacity"
+                                            >
+                                              <ExternalLink className="h-3 w-3" />
+                                            </motion.div>
+                                          </motion.a>
+                                        ))}
+                                      </div>
+                                    </div>
+
+                                    {/* Tips with enhanced animations */}
+                                    <div className="space-y-2">
+                                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
+                                        <motion.div
+                                          animate={{ rotate: [0, 10, -10, 0] }}
+                                          transition={{ duration: 2, repeat: Infinity }}
+                                        >
+                                          <Lightbulb className="h-3 w-3 text-yellow-500" />
+                                        </motion.div>
+                                        Pro Tips
+                                      </p>
+                                      <div className="space-y-1">
+                                        {topic.tips.map((tip, tipIndex) => (
+                                          <motion.div
+                                            key={tipIndex}
+                                            initial={{ opacity: 0, x: -10 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: tipIndex * 0.05 }}
+                                            whileHover={{ x: 5, scale: 1.01 }}
+                                            className="flex items-start gap-2 text-sm text-muted-foreground cursor-pointer"
+                                          >
+                                            <motion.div
+                                              whileHover={{ rotate: 360, scale: 1.2 }}
+                                              transition={{ duration: 0.3 }}
+                                            >
+                                              <Star className="h-3 w-3 text-yellow-500 mt-1 flex-shrink-0" />
+                                            </motion.div>
+                                            <span>{tip}</span>
+                                          </motion.div>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </motion.div>
+                              ))}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </Card>
+                  </motion.div>
                 </div>
               </motion.div>
             );
