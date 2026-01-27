@@ -16,6 +16,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import RoadmapTree from "@/components/RoadmapTree";
+import BeginnerRoadmapAZ from "@/components/BeginnerRoadmapAZ";
 import ScrollReveal from "@/components/ScrollReveal";
 import AnimatedCard from "@/components/AnimatedCard";
 import PageTransition from "@/components/PageTransition";
@@ -428,6 +429,32 @@ const Roadmap = () => {
               </div>
             </div>
           </AnimatedCard>
+        </ScrollReveal>
+
+        {/* A-Z Beginner Roadmap Section */}
+        <ScrollReveal delay={1.1}>
+          <div className="mt-12">
+            <AnimatedCard glowColor="rgba(34, 197, 94, 0.8)">
+              <div className="p-8">
+                <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
+                  <motion.div
+                    animate={{ rotate: [0, 10, -10, 0] }}
+                    transition={{ repeat: Infinity, duration: 3 }}
+                    className="p-2 rounded-lg bg-green-500/20"
+                  >
+                    <BookOpen className="h-6 w-6 text-green-500 drop-shadow-[0_0_10px_rgba(34,197,94,0.8)]" />
+                  </motion.div>
+                  Complete A-Z Learning Roadmap
+                </h2>
+                <p className="text-muted-foreground mb-6">
+                  Follow this comprehensive step-by-step guide to master {roadmap.role} from absolute beginner to job-ready professional.
+                </p>
+              </div>
+            </AnimatedCard>
+            <div className="mt-6">
+              <BeginnerRoadmapAZ />
+            </div>
+          </div>
         </ScrollReveal>
       </div>
       </div>
