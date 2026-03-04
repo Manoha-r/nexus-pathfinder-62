@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { branchesData } from "@/data/branchesData";
+import { Input } from "@/components/ui/input";
 import {
   ArrowLeft,
   Briefcase,
@@ -13,6 +14,8 @@ import {
   ChevronRight,
   Star,
   Clock,
+  Search,
+  X,
 } from "lucide-react";
 import AnimatedCard from "@/components/AnimatedCard";
 import ScrollReveal from "@/components/ScrollReveal";
@@ -23,6 +26,7 @@ import AnimatedBackground from "@/components/AnimatedBackground";
 const BranchDetail = () => {
   const { branchId } = useParams();
   const [filter, setFilter] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Import branch data from branchesData.ts
@@ -35,10 +39,14 @@ const BranchDetail = () => {
     totalRoles: 45
   };
 
-  const filteredRoles =
-    filter === "all"
-      ? roles
-      : roles.filter((role) => role.level.toLowerCase() === filter);
+  const filteredRoles = roles.filter((role) => {
+    const matchesFilter = filter === "all" || role.level.toLowerCase() === filter;
+    const matchesSearch = searchQuery === "" || 
+      role.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      role.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      role.skills.some(s => s.toLowerCase().includes(searchQuery.toLowerCase()));
+    return matchesFilter && matchesSearch;
+  });
 
   const getLevelColor = (level: string) => {
     switch (level.toLowerCase()) {
@@ -103,6 +111,32 @@ const BranchDetail = () => {
           </div>
         </motion.div>
 
+
+        {/* Search Bar */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="mb-6"
+        >
+          <div className="relative max-w-md">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search roles, skills..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 pr-10 bg-card/50 border-border/50 backdrop-blur-sm"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </div>
+        </motion.div>
 
         {/* Filters */}
         <motion.div
