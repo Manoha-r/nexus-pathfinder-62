@@ -2,15 +2,12 @@
 
 ## Project info
 
-**URL**: https://lovable.dev/projects/4aa0ff33-66fd-4d9e-9cce-0b390cf40bb1
+**URL**: [https://lovable.dev/projects/4aa0ff33-66fd-4d9e-9cce-0b390cf40bb1](https://nexus-pathfinder-62.lovable.app/)
 
 ## How can I edit this code?
 
 There are several ways of editing your application.
 
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/4aa0ff33-66fd-4d9e-9cce-0b390cf40bb1) and start prompting.
 
 Changes made via Lovable will be committed automatically to this repo.
 
